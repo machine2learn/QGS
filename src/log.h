@@ -23,7 +23,6 @@ class Log {
     }
     
     std::ostream & operator()(Loglevel l) {
-      d_oss.str("");
       return l < s_level ? 
         d_oss : 
         (std::cout << "[" << tostring(l) << "] ");
