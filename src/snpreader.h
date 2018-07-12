@@ -78,8 +78,8 @@ SNPreader & operator>>(SNPreader &, SNPreader::Locus &);
 
 std::ostream & operator<<(std::ostream &, SNPreader::Locus const &);
 
-inline bool operator<(SNPreader::Locus const & lhs, SNPreader::Locus const & rhs) {
-  return lhs.chr < rhs.chr || (lhs.chr == rhs.chr && lhs.pos < rhs.pos);
+inline bool operator<=(SNPreader::Locus const & lhs, SNPreader::Locus const & rhs) {
+  return lhs.chr < rhs.chr || (lhs.chr == rhs.chr && lhs.pos <= rhs.pos);
 }
     
   

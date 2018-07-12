@@ -18,7 +18,7 @@ bool pass_gene_filter(Genblock const & gb, std::unordered_map<std::string, std::
     LOG(QGS::Log::TRACE) << "Gene: incomplete information on region: skipping.\n";
     return false;
   }
-  
+
   for (auto const & f : gtf_filter) {
     auto itt = gb.attr.find(f.first);
     if (itt == gb.attr.end()) {
@@ -62,6 +62,8 @@ int main(int argc, char ** argv) {
   // filter arguments
   std::unordered_map<std::string, std::string> const gtf_filter = QGS::create_gtf_filter(args);
   std::unordered_map<std::string, bool> const snp_filter = QGS::create_snp_filter(args);
+  bool const snp_include_filter = args.find("include-snps") != args.end();
+  long long const chr_filter = args.find("chr") != args.end() ? std::stoll(args.find("chr")->second.at(0)) : 0;
 
   // optional arguments
    bool const hard_calls = args.find("hard-calls") != args.end();
@@ -133,6 +135,11 @@ int main(int argc, char ** argv) {
 
     LOG(QGS::Log::TRACE) << "Gene: read " << gb << " from gene file.\n";
     
+    if (chr_filter && chr_filter != gb.chr) {
+      LOG(QGS::Log::TRACE) << "Gene: gene fails chr filter, skipping.\n";
+      continue;
+    }
+    
     if (!pass_gene_filter(gb, gtf_filter))
       continue;
       
@@ -146,7 +153,7 @@ int main(int argc, char ** argv) {
         break;
       }
       
-      if (!reference_locus.chr || reference_locus < sample_locus) {
+      if (!reference_locus.chr || reference_locus <= sample_locus) {
         if (!(*reference_file >> reference_locus))
           break;
         LOG(QGS::Log::TRACE) << "Reference: read " << reference_locus << " from reference file.\n";
@@ -160,6 +167,26 @@ int main(int argc, char ** argv) {
       
       if (sample_locus.chr != reference_locus.chr || sample_locus.pos != reference_locus.pos)
         continue; // no hit
+        
+      if (!snp_filter.empty()) {
+        // there is an include or exclude filter
+        
+        auto itt = snp_filter.find(sample_locus.id);
+        if (itt == snp_filter.end())
+          itt = snp_filter.find(std::to_string(sample_locus.chr) + ":" + std::to_string(sample_locus.pos));
+          
+        if (snp_include_filter && itt == snp_filter.end()) {
+          LOG(QGS::Log::TRACE) << "Filter: Sample locus not in include filter. Skipping.\n";
+          continue;
+        }
+
+        if (!snp_include_filter && itt != snp_filter.end()) {
+          LOG(QGS::Log::TRACE) << "Filter: Sample locus in exclude filter. Skipping.\n";
+          continue;
+        }
+        
+        LOG(QGS::Log::TRACE) << "Filter: Sample locus passed filter. Including.\n";
+      }
         
       if (sample_locus.chr != gb.chr || sample_locus.pos < gb.start || sample_locus.pos > gb.stop) {
         LOG(QGS::Log::TRACE) << "Match: locus " 
@@ -245,8 +272,12 @@ int main(int argc, char ** argv) {
 
     out_file << gb.attr["gene_name"] << delimiter << gb.attr["gene_id"] << delimiter << gb.chr << delimiter 
              << gb.start << delimiter << gb.stop << delimiter << sample_file->num_samples() << delimiter << reference_file->num_samples() << delimiter << snp_cnt << delimiter << total_snp_cnt;
-    for (auto const & score : total_score)
-      out_file << delimiter << score / (2 * snp_cnt * reference_file->num_samples());
+    for (auto const & score : total_score) {
+      if (score < 0)
+        out_file << delimiter << "NaN"; // missing data point
+      else
+        out_file << delimiter << score / (2 * snp_cnt * reference_file->num_samples());
+    }
     out_file << '\n';
 
   }

@@ -18,7 +18,6 @@ std::unordered_map<std::string, std::vector<std::string>>  command_line_argument
     std::string type;
     std::string defaul;
   };
-
   
   std::unordered_map<std::string, Option> qgs_arguments;
   
@@ -42,6 +41,7 @@ std::unordered_map<std::string, std::vector<std::string>>  command_line_argument
   qgs_arguments["gtf-filter"] = {"key-value pair(s) for filtering the gene file, e.g. type=gene gene_type=protein_coding", 0, "multi"};
   qgs_arguments["include-snps"] = {"file name to whitespace-separated snp-names for snps to include. snps not in the file will be excluded.", 0, "string"};
   qgs_arguments["exclude-snps"] = {"file name to whitespace-separated snp-names for snps to exclude. snps in the file will be excluded.", 0, "string"};
+  qgs_arguments["chr"] = {"Chromosome to include, numeric value. X = 23, Y = 24, MT = 25", 0, "uint"};
   
   // print output arguments
   qgs_arguments["verbose"] = {"give more verbose output", 0};
@@ -141,6 +141,14 @@ std::unordered_map<std::string, std::vector<std::string>>  command_line_argument
 
   if (!everything_ok)
     std::exit(EXIT_FAILURE);
+    
+  // test whether all arguments are actually allowed
+  for (auto itt = options.cbegin(); itt != options.cend(); ++itt) {
+    if (qgs_arguments.find(itt->first) == qgs_arguments.end()) {
+      LOG(QGS::Log::WARNING) << "Unknown flag `--" << itt->first
+        << "` is ignored\n";
+    }
+  }
     
   // print all arguments in effect
   std::cout << "Command line arguments:\n";

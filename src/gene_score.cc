@@ -30,6 +30,10 @@ std::vector<Gene_score> score(
 		// else, calculate
 		Gene_score gscore = 0;
 		for (std::size_t reference_idx = 0; reference_idx < reference_locus.data_ds.size(); ++reference_idx) {
+      if (dosage < 0) {
+        gscore = -99;
+        break; // missing data point, set as NAN
+      }
 		  gscore += dosage > reference_locus.data_ds[reference_idx] ? 
         dosage - reference_locus.data_ds[reference_idx]
           :

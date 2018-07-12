@@ -183,12 +183,24 @@ bool VCFreader::read_gt(VCFreader::Locus & l) {
 
     if (c == '|' || c == '/') {
       ++idx;
-      //std::cerr << " => " << idx;
       continue;
     }
     
     ++allele_count;
     prev_allele = c;
+    
+    if (c == '.') {
+      // missing data point:
+      LOG(QGS::Log::TRACE) << "vcf_reader: missing data point "
+        << "for subject " << idx / 2 << '\n';
+      
+      // for MAF, count as zero
+			//ds_sum += 0;
+
+			l.data_ds[idx/2] = -99; // missing, might change to -98 later
+
+      continue;
+    }
 
     if (c < '0' || c > '9') {
       LOG(QGS::Log::WARNING) << "vcf_reader: unexpected character in file `" << d_fname
