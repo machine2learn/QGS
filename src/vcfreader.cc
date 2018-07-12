@@ -86,7 +86,10 @@ void VCFreader::parse_line(VCFreader::Locus & l) {
     if (line.substr(0, 1) == "#")
       continue; // comment line, ignore
       
-    d_buffer = std::istringstream(line);
+    //d_buffer = std::istringstream(line);
+    d_buffer.ignore(std::numeric_limits<std::streamsize>::max());
+    d_buffer.clear();
+    d_buffer.str(line);
     
     l.switch_ar = false; // reset switch
     if (!(d_buffer >> l.chr_str >> l.pos >> l.id >> l.ref >> l.alt >> l.qual >> l.filter >> l.info_str >> l.format))

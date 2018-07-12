@@ -23,7 +23,7 @@ class Log {
     }
     
     std::ostream & operator()(Loglevel l) {
-      d_oss.clear();
+      d_oss.str("");
       return l < s_level ? 
         d_oss : 
         (std::cout << "[" << tostring(l) << "] ");
@@ -45,7 +45,7 @@ class Log {
       return ""; // unreachable
     }
   
-    Log() : s_level{INFO} {};
+    Log() : s_level{INFO} { d_oss.setstate(std::ios_base::failbit); };
     Log(Log const &); // Not implemented = delete
     Log & operator=(Log const &); // Not implemented = delete
 };

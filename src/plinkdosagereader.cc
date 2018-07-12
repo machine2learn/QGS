@@ -316,7 +316,11 @@ void Plinkdosagereader::parse_line(SNPreader::Locus & l) {
   }
   
   // rs573167194 T A 1 0......
-  d_buffer = std::istringstream(line);
+
+  //d_buffer = std::istringstream(line);
+  d_buffer.ignore(std::numeric_limits<std::streamsize>::max());
+  d_buffer.clear();
+  d_buffer.str(line);
   
   std::string id;
   if (!(d_buffer >> id >> l.ref >> l.alt)) {
