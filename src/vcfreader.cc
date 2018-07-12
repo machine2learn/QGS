@@ -14,34 +14,34 @@ VCFreader::VCFreader(std::string const & fname, bool force_hardcalls)
 }
 
 bool VCFreader::deep_read(VCFreader::Locus & l) {
-	if (d_format == "GT")
-	  return read_gt(l);
-	if (d_format == "DS")
-	  return read_ds(l);
-	return false;
+  if (d_format == "GT")
+    return read_gt(l);
+  if (d_format == "DS")
+    return read_ds(l);
+  return false;
 }
 
 bool VCFreader::parse_header() {
   
   if (!d_file) {
-		LOG(QGS::Log::FATAL) << "Cannot open input file `" << d_fname 
+    LOG(QGS::Log::FATAL) << "Cannot open input file `" << d_fname 
       << "`: for reading. Aborting.\n";
-		std::exit(EXIT_FAILURE);
+    std::exit(EXIT_FAILURE);
   }
   
   std::string line;
   while (std::getline(d_file.handle(), line)) {
-		
-		// find formats in file
-		if (line.substr(0, 9) == "##FORMAT=") {
-			if (!d_force_hardcalls && line.find("ID=DS") != std::string::npos)
-			  d_format = "DS"; // preferred format
-//			else if (d_format != "DS" && line.find("ID=GP") != std::string::npos)
-//			  d_format = "GP";
-			else if (d_format.empty() && line.find("ID=GT") != std::string::npos)
-			  d_format = "GT"; // least preferred format
-		  continue;
-		}
+    
+    // find formats in file
+    if (line.substr(0, 9) == "##FORMAT=") {
+      if (!d_force_hardcalls && line.find("ID=DS") != std::string::npos)
+        d_format = "DS"; // preferred format
+//      else if (d_format != "DS" && line.find("ID=GP") != std::string::npos)
+//        d_format = "GP";
+      else if (d_format.empty() && line.find("ID=GT") != std::string::npos)
+        d_format = "GT"; // least preferred format
+      continue;
+    }
 
     if (line.substr(0, 6) != "#CHROM")
       continue; // ignore everything up until header line
@@ -55,9 +55,9 @@ bool VCFreader::parse_header() {
   }
   
   if (d_header.size() < 10) {
-		LOG(QGS::Log::FATAL) << "No samples "
+    LOG(QGS::Log::FATAL) << "No samples "
       << "found in file " << d_fname << ": Can't use input file.\n";
-		std::exit(EXIT_FAILURE);
+    std::exit(EXIT_FAILURE);
   }
   
   d_num_samples = d_header.size() - 9;
@@ -69,10 +69,10 @@ bool VCFreader::parse_header() {
                              "Found " << d_num_samples << " subjects.\n";
   
   if (d_format.empty()) {
-		LOG(QGS::Log::FATAL) << "No supported data format ("
-		  << (d_force_hardcalls ? "GT" : "GT, DS")
+    LOG(QGS::Log::FATAL) << "No supported data format ("
+      << (d_force_hardcalls ? "GT" : "GT, DS")
       << ") found in file " << d_fname << ": Can't use input file.\n";
-		std::exit(EXIT_FAILURE);
+    std::exit(EXIT_FAILURE);
   }
   
   return true;
@@ -124,8 +124,8 @@ void VCFreader::parse_line(VCFreader::Locus & l) {
 }
 
 bool VCFreader::read_gt(VCFreader::Locus & l) {
-	
-	//std::cerr << d_buffer.str() << "\n\n\n";
+  
+  //std::cerr << d_buffer.str() << "\n\n\n";
 
   if (!d_buffer && !l.data_ds.empty()) {
     LOG(QGS::Log::DEBUG) << "Request to read same position twice: duplicate snp position in sample file?\n";
@@ -154,8 +154,8 @@ bool VCFreader::read_gt(VCFreader::Locus & l) {
   long double ds_sum = 0;
   std::size_t male_unilog = 0;
   while (d_buffer.get(c)) {
-		
-		//std::cerr << '\n' << ++c_count << ":\t`" << c << "`\t" << idx;
+    
+    //std::cerr << '\n' << ++c_count << ":\t`" << c << "`\t" << idx;
 
     if (c == ':') {
       ++colon_count;
@@ -165,17 +165,17 @@ bool VCFreader::read_gt(VCFreader::Locus & l) {
       colon_count = 0;
       ++idx;
       if (allele_count == 1 && l.chr > 22) {
-			  ++male_unilog;
-				++idx;
-			}
+        ++male_unilog;
+        ++idx;
+      }
       else if (allele_count != 2) {
-				LOG(QGS::Log::WARNING) << "In file `" << d_fname << "` "
-				  << "subject " << d_sample.at(idx / 2) << " has incomplete "
-				  << "data for locus " << l;
-				LOG(QGS::Log::WARNING) << "Skipping locus.";
-				break;
-			}
-			allele_count = 0;
+        LOG(QGS::Log::WARNING) << "In file `" << d_fname << "` "
+          << "subject " << d_sample.at(idx / 2) << " has incomplete "
+          << "data for locus " << l;
+        LOG(QGS::Log::WARNING) << "Skipping locus.";
+        break;
+      }
+      allele_count = 0;
       //std::cerr << " => " << idx;
       continue;
     }
@@ -198,9 +198,9 @@ bool VCFreader::read_gt(VCFreader::Locus & l) {
         << "for subject " << idx / 2 << '\n';
       
       // for MAF, count as zero
-			//ds_sum += 0;
+      //ds_sum += 0;
 
-			l.data_ds[idx/2] = -99; // missing, might change to -98 later
+      l.data_ds[idx/2] = -99; // missing, might change to -98 later
 
       continue;
     }
@@ -211,23 +211,23 @@ bool VCFreader::read_gt(VCFreader::Locus & l) {
       continue;
     }
 
-		if ( (prev_allele == '1' && !l.switch_ar) || (prev_allele == '0' && l.switch_ar) ) {
-			ds_sum += 1;
-			l.data_ds[idx/2] += 1;
-		}
+    if ( (prev_allele == '1' && !l.switch_ar) || (prev_allele == '0' && l.switch_ar) ) {
+      ds_sum += 1;
+      l.data_ds[idx/2] += 1;
+    }
 
   }
   
-	if (allele_count == 1 && l.chr > 22) {
-		++male_unilog;
-		++idx;
-	}
-	else if (allele_count != 2) {
-		LOG(QGS::Log::WARNING) << "In file `" << d_fname << "` "
-			<< "subject " << d_sample.at(idx / 2) << " has incomplete "
-			<< "data for locus " << l << ":" << ". Skipping locus.\n";
-		return false;
-	}
+  if (allele_count == 1 && l.chr > 22) {
+    ++male_unilog;
+    ++idx;
+  }
+  else if (allele_count != 2) {
+    LOG(QGS::Log::WARNING) << "In file `" << d_fname << "` "
+      << "subject " << d_sample.at(idx / 2) << " has incomplete "
+      << "data for locus " << l << ":" << ". Skipping locus.\n";
+    return false;
+  }
   
   if (d_num_samples * 2 != idx + 1) {
     LOG(QGS::Log::WARNING) << "Read " << (idx + 1) / 2 << 
@@ -242,7 +242,7 @@ bool VCFreader::read_gt(VCFreader::Locus & l) {
 }
 
 bool VCFreader::read_ds(VCFreader::Locus & l) {
-	
+  
   //LOGQGS::Log::WARNING << "reading " << d_fname << " => " << l.chr << ":" << l.pos;
 
   if (!d_buffer && !l.data_ds.empty()) {
@@ -256,8 +256,8 @@ bool VCFreader::read_ds(VCFreader::Locus & l) {
   // find DS in format
   std::size_t const gt_pos = l.format.find("DS");
   if (gt_pos == std::string::npos) {
-		LOG(QGS::Log::WARNING) << "In file " << d_fname << " for " 
-		  << l.chr << ":" << l.pos << " no " << d_format << " info found";
+    LOG(QGS::Log::WARNING) << "In file " << d_fname << " for " 
+      << l.chr << ":" << l.pos << " no " << d_format << " info found";
     return false;
   }
   std::size_t const gt_idx = std::count(l.format.begin(), l.format.begin() + gt_pos, ':');

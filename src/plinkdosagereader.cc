@@ -19,15 +19,15 @@ Plinkdosagereader::Plinkdosagereader(std::string const & fname)
 {
   
   if (!d_file) {
-		LOG(QGS::Log::FATAL) << "Cannot open input file `" << d_fname 
+    LOG(QGS::Log::FATAL) << "Cannot open input file `" << d_fname 
       << "`: for reading. Aborting.";
-		std::exit(EXIT_FAILURE);
+    std::exit(EXIT_FAILURE);
   }
   
   if (d_map_fname.empty() || !d_map_file) {
-		LOG(QGS::Log::FATAL) << "Cannot find map file of `" << d_fname 
+    LOG(QGS::Log::FATAL) << "Cannot find map file of `" << d_fname 
       << "`.Aborting.";
-		std::exit(EXIT_FAILURE);
+    std::exit(EXIT_FAILURE);
   }
   
   parse_header();
@@ -43,14 +43,14 @@ Plinkdosagereader::Plinkdosagereader(std::vector<std::string> const & files)
   d_filenr{0},
   d_max{-1}
 {
-	
-	SI::natural::sort(d_fnames);
-	
-	d_filenr = -1;
+  
+  SI::natural::sort(d_fnames);
+  
+  d_filenr = -1;
   if (!open_next()) {
-		LOG(QGS::Log::FATAL) << "Cannot open input files: empty list."
+    LOG(QGS::Log::FATAL) << "Cannot open input files: empty list."
       << "Aborting.";
-		std::exit(EXIT_FAILURE);
+    std::exit(EXIT_FAILURE);
   }
 }
 
@@ -87,8 +87,8 @@ std::string Plinkdosagereader::find_map_file() const {
 }
 
 bool Plinkdosagereader::deep_read(SNPreader::Locus & l) {
-	
-	l.data_ds.clear();
+  
+  l.data_ds.clear();
 
   std::vector<float> data;
   data.reserve(d_num_samples * 3);
@@ -153,9 +153,9 @@ bool Plinkdosagereader::deep_read(SNPreader::Locus & l) {
            " > 1. Aborting run (1).";
         std::exit(EXIT_FAILURE);
       }
-			if (l.switch_ar) { // SWITCH
+      if (l.switch_ar) { // SWITCH
         //LOG(QGS::Log::WARNING) << "Locus was switched, using swap(a1, a3)"; // SWITCH
-				std::swap(a1, a3); // SWITCH
+        std::swap(a1, a3); // SWITCH
       }
       float const val = a2 + 2 * a3;
       if (val < 0 || val > 2) {
@@ -169,8 +169,8 @@ bool Plinkdosagereader::deep_read(SNPreader::Locus & l) {
     }
     
     if (l.data_ds.size() != d_num_samples) {
-			LOG(QGS::Log::FATAL) << "Didn't read enough dosages.";
-			std::exit(EXIT_FAILURE);
+      LOG(QGS::Log::FATAL) << "Didn't read enough dosages.";
+      std::exit(EXIT_FAILURE);
     }
     
     long double const sum = std::accumulate(std::begin(l.data_ds), std::end(l.data_ds), 0.0L);
@@ -183,12 +183,12 @@ bool Plinkdosagereader::deep_read(SNPreader::Locus & l) {
   if (num_read == d_num_samples * 3) {
     // data represents prob. of A1/A1, A1/A2, and A2/A2
     for (std::size_t idx = 0; idx != num_read; idx += 3) {
-			float a1 = data[idx], a2 = data[idx + 1], a3 = data[idx+2];
-			if (l.switch_ar) { // SWITCH
+      float a1 = data[idx], a2 = data[idx + 1], a3 = data[idx+2];
+      if (l.switch_ar) { // SWITCH
         //LOG(QGS::Log::WARNING) << "Locus was switched, swap(a1, a3) (2)"; // SWITCH
-				std::swap(a1, a3); // SWITCH
+        std::swap(a1, a3); // SWITCH
       }
-			float const val = a2 + 2 * a3;
+      float const val = a2 + 2 * a3;
       if (val < 0 || val > 2) {
         LOG(QGS::Log::FATAL) << "Dosage file `" << d_fname << 
            "` contains probabilities " << data[idx] << ", " <<
@@ -205,7 +205,7 @@ bool Plinkdosagereader::deep_read(SNPreader::Locus & l) {
     return true;
   }
   
-	return false;
+  return false;
 }
 
 bool Plinkdosagereader::parse_header() {
@@ -241,20 +241,20 @@ bool Plinkdosagereader::parse_header() {
   }
   
   if (!d_num_samples) { // first (only?) file
-		d_sample = std::move(sample);
-		d_num_samples = d_sample.size();
-		if (!d_num_samples) {
+    d_sample = std::move(sample);
+    d_num_samples = d_sample.size();
+    if (!d_num_samples) {
       LOG(QGS::Log::FATAL) << "File `" << d_fname << "` does "
         "not have any samples. Aborting.";
       std::exit(EXIT_FAILURE);
     }
-	}
+  }
   else { // not the first file
-		if (sample != d_sample) {
+    if (sample != d_sample) {
       LOG(QGS::Log::FATAL) << "File `" << d_fname << "` has "
         "different subjects than previous file: can't proceed. Aborting.";
       std::exit(EXIT_FAILURE);
-	  }
+    }
   }
 
   LOG(QGS::Log::VERBOSE) << "Opened file `" << d_fname << ". "
@@ -275,11 +275,11 @@ void Plinkdosagereader::parse_line(SNPreader::Locus & l) {
 
   std::string line;
   if (!std::getline(d_map_file.handle(), line)) {
-		if (d_map_file.handle().eof()) { // we've reached EOF
-			LOG(QGS::Log::TRACE) << "Map EOF: opening next";
-			if (open_next())
-				return parse_line(l);
-		}
+    if (d_map_file.handle().eof()) { // we've reached EOF
+      LOG(QGS::Log::TRACE) << "Map EOF: opening next";
+      if (open_next())
+        return parse_line(l);
+    }
     LOG(QGS::Log::TRACE) << "Can't read line from map file.";
     d_file.handle().setstate(std::ios_base::failbit);
     return;
@@ -297,10 +297,10 @@ void Plinkdosagereader::parse_line(SNPreader::Locus & l) {
   }
   
   if (old_locus.chr > l.chr || (old_locus.chr == l.chr && old_locus.pos > l.pos)) {
-		LOG(QGS::Log::FATAL) << "File `" << d_fname << "` line " << d_linenr
-		  << " has wrong locus order.\nPrev. locus: " << old_locus
-		  << "\nCurrent locus: " << l << "\nAborting.";
-		std::exit(EXIT_FAILURE);
+    LOG(QGS::Log::FATAL) << "File `" << d_fname << "` line " << d_linenr
+      << " has wrong locus order.\nPrev. locus: " << old_locus
+      << "\nCurrent locus: " << l << "\nAborting.";
+    std::exit(EXIT_FAILURE);
   }
     
   // test if empty
@@ -342,34 +342,34 @@ void Plinkdosagereader::parse_line(SNPreader::Locus & l) {
 bool Plinkdosagereader::open_next()
 {
 
-	++d_filenr;
+  ++d_filenr;
 
   if (d_filenr >= d_fnames.size())
     return false;
 
   d_linenr = 0;
 
-	d_fname = d_fnames[d_filenr];
-	d_file = GZfile(d_fname);
-	
+  d_fname = d_fnames[d_filenr];
+  d_file = GZfile(d_fname);
+  
   if (!d_file) {
-		LOG(QGS::Log::FATAL) << "Cannot open input file `" << d_fname 
+    LOG(QGS::Log::FATAL) << "Cannot open input file `" << d_fname 
       << "`: for reading. Aborting.";
-		std::exit(EXIT_FAILURE);
+    std::exit(EXIT_FAILURE);
   }
-	
+  
   d_map_fname = find_map_file();
   d_map_file = GZfile(d_map_fname);
   
   if (d_map_fname.empty() || !d_map_file) {
-		LOG(QGS::Log::FATAL) << "Cannot find map file of `" << d_fname 
+    LOG(QGS::Log::FATAL) << "Cannot find map file of `" << d_fname 
       << "`.Aborting.";
-		std::exit(EXIT_FAILURE);
+    std::exit(EXIT_FAILURE);
   }
   
   if (!parse_header()) {
-		// assuming this file is empty
-		LOG(QGS::Log::WARNING) << "Input file `" << d_fname 
+    // assuming this file is empty
+    LOG(QGS::Log::WARNING) << "Input file `" << d_fname 
       << "` does not have proper header: skipping file.";
     return open_next();
   }

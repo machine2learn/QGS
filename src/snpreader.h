@@ -22,23 +22,23 @@ class SNPreader {
     bool switch_ar = false;
 
     void clear() {
-			maf = 0;
-			switch_ar = false;
-			palt.clear();
-			data_ds.clear();
-		}
-		
-		void parse_alt() {
-			palt.clear();
-			std::istringstream iss(alt);
-			std::string tmp;
-			while (std::getline(iss, tmp, ','))
-			  palt.push_back(std::move(tmp));
-		}
-		
-		void switch_alt_ref() {
-			switch_ar = true;
-		}
+      maf = 0;
+      switch_ar = false;
+      palt.clear();
+      data_ds.clear();
+    }
+    
+    void parse_alt() {
+      palt.clear();
+      std::istringstream iss(alt);
+      std::string tmp;
+      while (std::getline(iss, tmp, ','))
+        palt.push_back(std::move(tmp));
+    }
+    
+    void switch_alt_ref() {
+      switch_ar = true;
+    }
   };
   
   protected:

@@ -11,37 +11,43 @@ std::vector<Gene_score> score(
   SNPreader::Locus const & sample_locus, 
   SNPreader::Locus const & reference_locus)
 {
-	std::vector<Gene_score> out;
-	out.resize(sample_locus.data_ds.size(), 0);
+  std::vector<Gene_score> out;
+  out.resize(sample_locus.data_ds.size(), 0);
 
-	std::unordered_map<long double, Gene_score> cache;
+  std::unordered_map<long double, Gene_score> cache;
 
-	for (std::size_t sample_idx = 0; sample_idx < sample_locus.data_ds.size(); ++sample_idx) {
-		
-		auto const dosage = sample_locus.data_ds[sample_idx];
+  for (std::size_t sample_idx = 0; sample_idx < sample_locus.data_ds.size(); ++sample_idx) {
+    
+    auto const dosage = sample_locus.data_ds[sample_idx];
 
-		// check to see if dosage is in cache
-		auto itt = cache.find(dosage);
-		if (itt != cache.end()) {
-		  out[sample_idx] = itt->second;
-		  continue;
-		}
+    // check to see if dosage is in cache
+    auto itt = cache.find(dosage);
+    if (itt != cache.end()) {
+      out[sample_idx] = itt->second;
+      continue;
+    }
 
-		// else, calculate
-		Gene_score gscore = 0;
-		for (std::size_t reference_idx = 0; reference_idx < reference_locus.data_ds.size(); ++reference_idx) {
+    // else, calculate
+    Gene_score gscore = 0;
+    for (std::size_t reference_idx = 0; reference_idx < reference_locus.data_ds.size(); ++reference_idx) {
       if (dosage < 0) {
         gscore = -99;
         break; // missing data point, set as NAN
       }
-		  gscore += dosage > reference_locus.data_ds[reference_idx] ? 
+      if (reference_locus.data_ds[reference_idx] < 0) {
+        LOG(QGS::Log::TRACE) << "QGS: Reference indiviual "
+          << reference_idx << " ignored because of missing data point"
+          << ". suggest removal of missing data points in reference.\n";
+        continue;
+      }
+      gscore += dosage > reference_locus.data_ds[reference_idx] ? 
         dosage - reference_locus.data_ds[reference_idx]
           :
         reference_locus.data_ds[reference_idx] - dosage;
-	  }
+    }
 
-	  cache[dosage] = gscore;
-		out[sample_idx] = gscore;
+    cache[dosage] = gscore;
+    out[sample_idx] = gscore;
   }
 
   return out;
