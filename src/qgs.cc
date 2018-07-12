@@ -135,10 +135,12 @@ int main(int argc, char ** argv) {
 
     LOG(QGS::Log::TRACE) << "Gene: read " << gb << " from gene file.\n";
     
-    if (chr_filter && chr_filter != gb.chr) {
+    if (chr_filter && chr_filter > gb.chr) {
       LOG(QGS::Log::TRACE) << "Gene: gene fails chr filter, skipping.\n";
       continue;
     }
+    if (chr_filter && chr_filter < gb.chr)
+      break;
     
     if (!pass_gene_filter(gb, gtf_filter))
       continue;
