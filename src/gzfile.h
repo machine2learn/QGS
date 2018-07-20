@@ -1,6 +1,8 @@
 #ifndef INCL_GZFILE_H
 #define INCL_GZFILE_H
 
+#define BOOST_IOSTREAMS_NO_LIB
+
 #include <boost/iostreams/filtering_streambuf.hpp>
 #include <boost/iostreams/filter/gzip.hpp>
 #include <fstream>

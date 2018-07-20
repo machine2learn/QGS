@@ -1,11 +1,11 @@
 ### Makefile created by GSMake 1.0 at 11-07-2018 08:52.
-### Last updated at 11-07-2018 21:58.
+### Last updated at 20-07-2018 10:15.
 
 ### CONFIGURE - EDIT TO PREFERENCE
 
 # Compiler, flags and include directories (-I)
 CC    := g++
-CCFL  := -Wall -std=c++11 -DBOOST_LOG_DYN_LINK
+CCFL  := -Wall -Werror -pedantic -std=c++11 
 INC   := lib/boost_1_67_0
 
 # Linker, flags and external libraries (-l) 
@@ -26,7 +26,7 @@ C_WARNING := \033[0;33m
 C_MESSAGE := \033[0;34m
 
 # Toggle fancy printing (colours and formatting) [true/false]
-FANCY = true
+FANCY = false
 
 ### CANNED RECIPIES FOR COMPILING AND LINKING - EDIT TO PREFERENCE
 
@@ -79,7 +79,7 @@ LIB := $(patsubst %,-l%,$(LIB))
 ### OBJECT FILE DATA
 
 # Object files
-OBJ   := $(BIN)/qgs.o $(BIN)/command_line_arguments.o $(BIN)/plinkdosagereader.o $(BIN)/snpreader.o $(BIN)/vcfreader.o $(BIN)/boost_iostreams/file_descriptor.o $(BIN)/boost_iostreams/gzip.o $(BIN)/boost_iostreams/mapped_file.o $(BIN)/boost_iostreams/zlib.o $(BIN)/gene_score.o
+OBJ   := $(BIN)/command_line_arguments.o $(BIN)/snpreader.o $(BIN)/plinkdosagereader.o $(BIN)/vcfreader.o $(BIN)/boost_iostreams/gzip.o $(BIN)/boost_iostreams/zlib.o $(BIN)/qgs.o $(BIN)/gene_score.o
 
 ### PHONY RULES
 
@@ -99,11 +99,11 @@ createbin :
 
 ### OBJECT FILE RECIPIES FOR COMPILING
 
-$(BIN)/qgs.o : $(SRC)/qgs.cc src/command_line_arguments.h src/genblock.h src/gzfile.h src/log.h src/plinkdosagereader.h src/snpreader.h src/vcfreader.h
+$(BIN)/command_line_arguments.o : $(SRC)/command_line_arguments.cc src/cmd_line_options.h src/command_line_arguments.h src/gzfile.h src/log.h
 	$(eval N := 1)
 	$(compile)
 
-$(BIN)/command_line_arguments.o : $(SRC)/command_line_arguments.cc src/cmd_line_options.h src/command_line_arguments.h src/gzfile.h src/log.h
+$(BIN)/snpreader.o : $(SRC)/snpreader.cc src/gzfile.h src/log.h src/snpreader.h
 	$(eval N := 2)
 	$(compile)
 
@@ -111,31 +111,23 @@ $(BIN)/plinkdosagereader.o : $(SRC)/plinkdosagereader.cc src/gzfile.h src/log.h 
 	$(eval N := 3)
 	$(compile)
 
-$(BIN)/snpreader.o : $(SRC)/snpreader.cc src/gzfile.h src/log.h src/snpreader.h
+$(BIN)/vcfreader.o : $(SRC)/vcfreader.cc src/gzfile.h src/log.h src/snpreader.h src/vcfreader.h
 	$(eval N := 4)
 	$(compile)
 
-$(BIN)/vcfreader.o : $(SRC)/vcfreader.cc src/gzfile.h src/log.h src/snpreader.h src/vcfreader.h
+$(BIN)/boost_iostreams/gzip.o : $(SRC)/boost_iostreams/gzip.cpp 
 	$(eval N := 5)
 	$(compile)
 
-$(BIN)/boost_iostreams/file_descriptor.o : $(SRC)/boost_iostreams/file_descriptor.cpp 
+$(BIN)/boost_iostreams/zlib.o : $(SRC)/boost_iostreams/zlib.cpp 
 	$(eval N := 6)
 	$(compile)
 
-$(BIN)/boost_iostreams/gzip.o : $(SRC)/boost_iostreams/gzip.cpp 
+$(BIN)/qgs.o : $(SRC)/qgs.cc src/command_line_arguments.h src/genblock.h src/gene_score.h src/gzfile.h src/log.h src/plinkdosagereader.h src/snpreader.h src/vcfreader.h
 	$(eval N := 7)
 	$(compile)
 
-$(BIN)/boost_iostreams/mapped_file.o : $(SRC)/boost_iostreams/mapped_file.cpp 
+$(BIN)/gene_score.o : $(SRC)/gene_score.cc src/gene_score.h src/gzfile.h src/log.h src/snpreader.h
 	$(eval N := 8)
-	$(compile)
-
-$(BIN)/boost_iostreams/zlib.o : $(SRC)/boost_iostreams/zlib.cpp 
-	$(eval N := 9)
-	$(compile)
-
-$(BIN)/gene_score.o : $(SRC)/gene_score.cc src/gene_score.h src/gzfile.h src/snpreader.h
-	$(eval N := 10)
 	$(compile)
 

@@ -16,6 +16,6 @@ std::unordered_map<std::string, std::string> create_gtf_filter(std::unordered_ma
 
 std::unordered_map<std::string, bool> create_snp_filter(std::unordered_map<std::string, std::vector<std::string>> const &);
 
-};
+}
 
 #endif
