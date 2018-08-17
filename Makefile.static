@@ -14,7 +14,7 @@ CCLDF := -static-libstdc++ -static-libgcc -Wl,-Bstatic
 LIB   := z
 
 # Executable name, source dir and compile dir
-EXEC  := qgs
+EXEC  := qgs-x86_64
 SRC   := src
 BIN   := bin
 
