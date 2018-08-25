@@ -1,5 +1,5 @@
 ### Makefile created by GSMake 1.0 at 11-07-2018 08:52.
-### Last updated at 20-07-2018 10:15.
+### Last updated at 25-08-2018 14:35.
 
 ### CONFIGURE - EDIT TO PREFERENCE
 
@@ -79,7 +79,7 @@ LIB := $(patsubst %,-l%,$(LIB))
 ### OBJECT FILE DATA
 
 # Object files
-OBJ   := $(BIN)/command_line_arguments.o $(BIN)/snpreader.o $(BIN)/plinkdosagereader.o $(BIN)/vcfreader.o $(BIN)/boost_iostreams/gzip.o $(BIN)/boost_iostreams/zlib.o $(BIN)/qgs.o $(BIN)/gene_score.o
+OBJ   := $(BIN)/command_line_arguments.o $(BIN)/snpreader.o $(BIN)/plinkdosagereader.o $(BIN)/vcfreader.o $(BIN)/boost_iostreams/gzip.o $(BIN)/boost_iostreams/zlib.o $(BIN)/plinkbedreader.o $(BIN)/qgs.o $(BIN)/gene_score.o
 
 ### PHONY RULES
 
@@ -123,11 +123,15 @@ $(BIN)/boost_iostreams/zlib.o : $(SRC)/boost_iostreams/zlib.cpp
 	$(eval N := 6)
 	$(compile)
 
-$(BIN)/qgs.o : $(SRC)/qgs.cc src/command_line_arguments.h src/genblock.h src/gene_score.h src/gzfile.h src/log.h src/plinkdosagereader.h src/snpreader.h src/vcfreader.h
+$(BIN)/plinkbedreader.o : $(SRC)/plinkbedreader.cc src/gzfile.h src/log.h src/plinkbedreader.h src/snpreader.h
 	$(eval N := 7)
 	$(compile)
 
-$(BIN)/gene_score.o : $(SRC)/gene_score.cc src/gene_score.h src/gzfile.h src/log.h src/snpreader.h
+$(BIN)/qgs.o : $(SRC)/qgs.cc src/command_line_arguments.h src/genblock.h src/gene_score.h src/gzfile.h src/log.h src/plinkdosagereader.h src/qgs.h src/snpreader.h src/vcfreader.h
 	$(eval N := 8)
+	$(compile)
+
+$(BIN)/gene_score.o : $(SRC)/gene_score.cc src/gene_score.h src/gzfile.h src/log.h src/snpreader.h
+	$(eval N := 9)
 	$(compile)
 

@@ -5,6 +5,7 @@
 #include "gzfile.h"
 #include "genblock.h"
 #include "plinkdosagereader.h"
+#include "plinkbedreader.h"
 #include "vcfreader.h"
 #include "gene_score.h"
 #include <string>

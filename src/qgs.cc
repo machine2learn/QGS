@@ -69,6 +69,10 @@ int main(int argc, char ** argv) {
     LOG(QGS::Log::VERBOSE) << "Assuming sample input file is plink dosage format.\n";
     sample_file = std::unique_ptr<SNPreader>{std::unique_ptr<Plinkdosagereader>(new Plinkdosagereader(fname_sample.at(0)))};
   }
+  else if (boost::algorithm::ends_with(fname_sample.at(0), ".bed") || boost::algorithm::ends_with(fname_sample.at(0), ".bed.gz")) {
+    LOG(QGS::Log::VERBOSE) << "Assuming sample input file is PLINK BED format.\n";
+    sample_file = std::unique_ptr<SNPreader>{std::unique_ptr<Plinkbedreader>(new Plinkbedreader(fname_sample.at(0)))};
+  }
   else {
     LOG(QGS::Log::VERBOSE) << "Assuming sample input file is VCF format (default).\n";
     sample_file = std::unique_ptr<SNPreader>{std::unique_ptr<VCFreader>(new VCFreader(fname_sample.at(0), hard_calls))};
@@ -123,8 +127,11 @@ int main(int argc, char ** argv) {
         scores[reference_locus.chr][reference_locus.pos][reference_locus.ref] = {};
       }
       else {
-        if (!(*sample_file >> sample_locus))
-          break;
+        if (!(*sample_file >> sample_locus)) {
+          // sample file empty, continue reading to get #snps in last gene right
+          sample_locus.chr = 99;
+          continue;
+        }
         LOG(QGS::Log::TRACE) << "Sample: read " << sample_locus << " from sample file.\n";
       }
       
@@ -221,8 +228,12 @@ int main(int argc, char ** argv) {
         if (itt_var.second.empty())
           continue;
         ++snp_cnt;
-        for (std::size_t sample_idx = 0; sample_idx != total_score.size(); ++sample_idx)
-          total_score[sample_idx] += itt_var.second[sample_idx];
+        for (std::size_t sample_idx = 0; sample_idx != total_score.size(); ++sample_idx) {
+          if (itt_var.second[sample_idx] < 0 || total_score[sample_idx] < 0)
+            total_score[sample_idx] = -99;
+          else
+            total_score[sample_idx] += itt_var.second[sample_idx];
+        }
       }
     }
     
