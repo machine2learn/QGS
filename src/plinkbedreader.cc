@@ -3,7 +3,6 @@
 #include <ostream>
 #include <iostream>
 #include <numeric>
-#include <bitset>
 #include "log.h"
 
 
@@ -138,7 +137,6 @@ bool Plinkbedreader::deep_read(SNPreader::Locus & l) {
             "PLINK BED format. Check file `" << d_fname << "`\n";
           std::exit(EXIT_FAILURE);
       }
-      std::cout << std::bitset<8>(byte) << ": " << std::bitset<8>(mask) << ": " << std::bitset<8>(val) << '\n';
       if (++sample_idx == d_num_samples)
         break;
     }
