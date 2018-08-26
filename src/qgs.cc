@@ -109,9 +109,16 @@ int main(int argc, char ** argv) {
     
     if (!pass_gene_filter(gb, gtf_filter))
       continue;
-      
-    gb.start = gb.start < pre_flank ? 0 : gb.start - pre_flank;
-    gb.stop += post_flank;
+
+    auto const strand_itt = gb.attr.find("strand");
+    if (strand_itt == gb.attr.end() || strand_itt->second != "-") {
+      gb.start = gb.start < pre_flank ? 0 : gb.start - pre_flank;
+      gb.stop += post_flank;
+    }
+    else { // flip pre-flank and post-flank for reverse-strand genes
+      gb.start = gb.start < post_flank ? 0 : gb.start - post_flank;
+      gb.stop += pre_flank;
+    }
     
     for (;;) {
       
