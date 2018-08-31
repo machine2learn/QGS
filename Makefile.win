@@ -14,7 +14,7 @@ CCLDF := -L /usr/local/x86_64-w64-mingw32/lib -static-libstdc++ -static-libgcc -
 LIB   := z 
 
 # Executable name, source dir and compile dir
-EXEC  := qgs-win64.exe
+EXEC  := qgs-win64_build.exe
 SRC   := src
 BIN   := bin
 
