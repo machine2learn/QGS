@@ -10,7 +10,7 @@ int main(int argc, char ** argv) {
   
   // required arguments
   std::vector<std::string> const & fname_sample = args.find("sample")->second;
-  std::string const & fname_ref = args.find("reference")->second.at(0);
+  std::vector<std::string> const & fname_ref = args.find("reference")->second;
   std::string const & fname_genes = args.find("genes")->second.at(0);
   std::string const & fname_out = args.find("out")->second.at(0);
   
@@ -54,29 +54,9 @@ int main(int argc, char ** argv) {
     return 1;
   }
   
-  // open reference file
-  std::unique_ptr<SNPreader> reference_file = std::unique_ptr<SNPreader>{std::unique_ptr<VCFreader>(new VCFreader(fname_ref, hard_calls))};
-
-  // open sample file
-  std::unique_ptr<SNPreader> sample_file;
-
-  // if plink
-  if (fname_sample.size() > 1) {
-    LOG(QGS::Log::VERBOSE) << "Assuming sample input files are plink dosage format.\n";
-    sample_file = std::unique_ptr<SNPreader>{std::unique_ptr<Plinkdosagereader>(new Plinkdosagereader(fname_sample))};
-  }
-  else if (boost::algorithm::ends_with(fname_sample.at(0), ".dosage") || boost::algorithm::ends_with(fname_sample.at(0), ".dosage.gz")) {
-    LOG(QGS::Log::VERBOSE) << "Assuming sample input file is plink dosage format.\n";
-    sample_file = std::unique_ptr<SNPreader>{std::unique_ptr<Plinkdosagereader>(new Plinkdosagereader(fname_sample.at(0)))};
-  }
-  else if (boost::algorithm::ends_with(fname_sample.at(0), ".bed") || boost::algorithm::ends_with(fname_sample.at(0), ".bed.gz")) {
-    LOG(QGS::Log::VERBOSE) << "Assuming sample input file is PLINK BED format.\n";
-    sample_file = std::unique_ptr<SNPreader>{std::unique_ptr<Plinkbedreader>(new Plinkbedreader(fname_sample.at(0)))};
-  }
-  else {
-    LOG(QGS::Log::VERBOSE) << "Assuming sample input file is VCF format (default).\n";
-    sample_file = std::unique_ptr<SNPreader>{std::unique_ptr<VCFreader>(new VCFreader(fname_sample.at(0), hard_calls))};
-  }
+  // open genetics files
+  std::unique_ptr<SNPreader> reference_file = open_genetics_file(fname_ref, hard_calls);
+  std::unique_ptr<SNPreader> sample_file = open_genetics_file(fname_sample, hard_calls);
 
   // ##### START OUTPUT
 

@@ -16,6 +16,32 @@
 #include <boost/algorithm/string/predicate.hpp> // ends_with
 #include "log.h"
 
+inline std::unique_ptr<SNPreader> open_genetics_file(std::vector<std::string> const & files, bool hard_calls) {
+
+  if (files.empty()) {
+    LOG(QGS::Log::FATAL) << "File name not provided.\n";
+    std::exit(-1);
+  }
+
+  if (files.size() > 1) {
+    LOG(QGS::Log::VERBOSE) << "Assuming files `" << files.at(0) << "` etc are plink dosage format.\n";
+    return std::unique_ptr<SNPreader>{std::unique_ptr<Plinkdosagereader>(new Plinkdosagereader(files))};
+  }
+
+  if (boost::algorithm::ends_with(files.at(0), ".dosage") || boost::algorithm::ends_with(files.at(0), ".dosage.gz")) {
+    LOG(QGS::Log::VERBOSE) << "Assuming files `" << files.at(0) << "` etc are plink dosage format.\n";
+    return std::unique_ptr<SNPreader>{std::unique_ptr<Plinkdosagereader>(new Plinkdosagereader(files.at(0)))};
+  }
+
+  if (boost::algorithm::ends_with(files.at(0), ".bed") || boost::algorithm::ends_with(files.at(0), ".bed.gz")) {
+    LOG(QGS::Log::VERBOSE) << "Assuming sample input file is PLINK BED format.\n";
+    return std::unique_ptr<SNPreader>{std::unique_ptr<Plinkbedreader>(new Plinkbedreader(files.at(0)))};
+  }
+  
+  LOG(QGS::Log::VERBOSE) << "Assuming sample input file is VCF format (default).\n";
+  return std::unique_ptr<SNPreader>{std::unique_ptr<VCFreader>(new VCFreader(files.at(0), hard_calls))};
+}
+
 inline bool pass_gene_filter(Genblock const & gb, std::unordered_map<std::string, std::string> const & gtf_filter) {
   
   if (!gb.chr || !gb.start || !gb.stop) {
