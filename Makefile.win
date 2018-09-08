@@ -5,7 +5,7 @@
 
 # Compiler, flags and include directories (-I)
 CC    := x86_64-w64-mingw32-g++
-CCFL  := -Wall -Werror -pedantic -std=c++11 
+CCFL  := -Wall -Werror -pedantic -std=c++11 -O3 
 INC   := lib/boost_1_67_0 /usr/local/x86_64-w64-mingw32/include
 
 # Linker, flags and external libraries (-l) 
