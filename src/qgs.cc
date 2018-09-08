@@ -173,8 +173,7 @@ int main(int argc, char ** argv) {
           << " has flipped ref/alt data. Correcting.\n";
           sample_locus.switch_alt_ref();
       }
-      
-      if (sample_locus.ref != reference_locus.ref || reference_locus.palt[0] != sample_locus.palt[0]) {
+      else if (sample_locus.ref != reference_locus.ref || reference_locus.palt[0] != sample_locus.palt[0]) {
         LOG(QGS::Log::TRACE) << "Match: locus " 
           << sample_locus.chr << ":" << sample_locus.pos 
           << " has ref/alt mismatch between sample and reference. skipping locus.\n";
