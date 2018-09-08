@@ -14,7 +14,7 @@ std::vector<Gene_score> score(
   std::vector<Gene_score> out;
   out.resize(sample_locus.data_ds.size(), 0);
 
-  std::unordered_map<long double, Gene_score> cache;
+  std::unordered_map<float, Gene_score> cache;
 
   for (std::size_t sample_idx = 0; sample_idx < sample_locus.data_ds.size(); ++sample_idx) {
     

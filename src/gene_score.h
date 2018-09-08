@@ -6,7 +6,7 @@
 
 namespace QGS {
 
-using Gene_score = long double;
+using Gene_score = float;
 
 std::vector<Gene_score> score(SNPreader::Locus const &, SNPreader::Locus const &);
 
