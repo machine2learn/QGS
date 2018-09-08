@@ -5,11 +5,12 @@
 #include "log.h"
 
 
-VCFreader::VCFreader(std::string const & fname, bool force_hardcalls)
+VCFreader::VCFreader(std::string const & fname, bool hard, bool miss)
  :
-  SNPreader(fname),
-  d_force_hardcalls{force_hardcalls}
+  SNPreader(fname)
 {
+  d_hard_calls = hard;
+  d_allow_missings = miss;
   parse_header();
 }
 
@@ -34,7 +35,7 @@ bool VCFreader::parse_header() {
     
     // find formats in file
     if (line.substr(0, 9) == "##FORMAT=") {
-      if (!d_force_hardcalls && line.find("ID=DS") != std::string::npos)
+      if (!d_hard_calls && line.find("ID=DS") != std::string::npos)
         d_format = "DS"; // preferred format
 //      else if (d_format != "DS" && line.find("ID=GP") != std::string::npos)
 //        d_format = "GP";
@@ -70,7 +71,7 @@ bool VCFreader::parse_header() {
   
   if (d_format.empty()) {
     LOG(QGS::Log::FATAL) << "No supported data format ("
-      << (d_force_hardcalls ? "GT" : "GT, DS")
+      << (d_hard_calls ? "GT" : "GT, DS")
       << ") found in file " << d_fname << ": Can't use input file.\n";
     std::exit(EXIT_FAILURE);
   }
@@ -193,12 +194,12 @@ bool VCFreader::read_gt(VCFreader::Locus & l) {
     prev_allele = c;
     
     if (c == '.') {
-      // missing data point:
+
       LOG(QGS::Log::TRACE) << "vcf_reader: missing data point "
-        << "for subject " << idx / 2 << '\n';
+        << "for subject #" << idx / 2 << '\n';
       
-      // for MAF, count as zero
-      //ds_sum += 0;
+      if (!d_allow_missings)
+        return false; // exclude snp
 
       l.data_ds[idx/2] = -99; // missing, might change to -98 later
 

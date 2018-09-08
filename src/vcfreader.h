@@ -6,11 +6,10 @@
 class VCFreader : public SNPreader {
   
   private:
-    bool d_force_hardcalls;
     std::string d_format;
 
   public:
-    VCFreader(std::string const &, bool = false);
+    VCFreader(std::string const &, bool = false, bool = false);
     bool deep_read(Locus &) final;
     void parse_line(Locus &) final;
 

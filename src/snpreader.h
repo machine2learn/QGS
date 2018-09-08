@@ -47,6 +47,7 @@ class SNPreader {
     GZfile d_file;
     std::vector<std::string> d_header, d_sample;
     std::size_t d_num_samples;
+    bool d_hard_calls, d_allow_missings;
   
   public:
     SNPreader(std::string const &);

@@ -28,6 +28,7 @@ int main(int argc, char ** argv) {
 
   // optional arguments
    bool const hard_calls = args.find("hard-calls") != args.end();
+   bool const allow_missings = args.find("allow-missings") != args.end();
    char const delimiter = args.find("delimiter") == args.end() ? ',' : args.find("delimiter")->second.at(0)[0];
    
    // verbosity
@@ -56,7 +57,7 @@ int main(int argc, char ** argv) {
   
   // open genetics files
   std::unique_ptr<SNPreader> reference_file = open_genetics_file(fname_ref, hard_calls);
-  std::unique_ptr<SNPreader> sample_file = open_genetics_file(fname_sample, hard_calls);
+  std::unique_ptr<SNPreader> sample_file = open_genetics_file(fname_sample, hard_calls, allow_missings);
 
   // ##### START OUTPUT
 

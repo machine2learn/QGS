@@ -8,7 +8,9 @@ SNPreader::SNPreader(std::string const & fname)
  :
   d_fname{fname},
   d_file(fname),
-  d_num_samples{0}
+  d_num_samples{0},
+  d_hard_calls{false},
+  d_allow_missings{false}
 {
 }
 

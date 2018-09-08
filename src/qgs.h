@@ -16,7 +16,7 @@
 #include <boost/algorithm/string/predicate.hpp> // ends_with
 #include "log.h"
 
-inline std::unique_ptr<SNPreader> open_genetics_file(std::vector<std::string> const & files, bool hard_calls) {
+inline std::unique_ptr<SNPreader> open_genetics_file(std::vector<std::string> const & files, bool hard_calls = 0, bool allow_missings = 0) {
 
   if (files.empty()) {
     LOG(QGS::Log::FATAL) << "File name not provided.\n";
@@ -35,11 +35,11 @@ inline std::unique_ptr<SNPreader> open_genetics_file(std::vector<std::string> co
 
   if (boost::algorithm::ends_with(files.at(0), ".bed") || boost::algorithm::ends_with(files.at(0), ".bed.gz")) {
     LOG(QGS::Log::VERBOSE) << "Assuming sample input file is PLINK BED format.\n";
-    return std::unique_ptr<SNPreader>{std::unique_ptr<Plinkbedreader>(new Plinkbedreader(files.at(0)))};
+    return std::unique_ptr<SNPreader>{std::unique_ptr<Plinkbedreader>(new Plinkbedreader(files.at(0), allow_missings))};
   }
   
   LOG(QGS::Log::VERBOSE) << "Assuming sample input file is VCF format (default).\n";
-  return std::unique_ptr<SNPreader>{std::unique_ptr<VCFreader>(new VCFreader(files.at(0), hard_calls))};
+  return std::unique_ptr<SNPreader>{std::unique_ptr<VCFreader>(new VCFreader(files.at(0), hard_calls, allow_missings))};
 }
 
 inline bool pass_gene_filter(Genblock const & gb, std::unordered_map<std::string, std::string> const & gtf_filter) {

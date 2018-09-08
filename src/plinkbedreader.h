@@ -13,7 +13,7 @@ class Plinkbedreader : public SNPreader {
     std::size_t d_num_pos_read, d_bytes_per_locus;
 
   public:
-    Plinkbedreader(std::string const &);
+    Plinkbedreader(std::string const &, bool = false);
     bool deep_read(Locus &) final;
     void parse_line(Locus &) final;
 

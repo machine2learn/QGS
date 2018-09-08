@@ -6,7 +6,7 @@
 #include "log.h"
 
 
-Plinkbedreader::Plinkbedreader(std::string const & fname)
+Plinkbedreader::Plinkbedreader(std::string const & fname, bool miss)
  :
   SNPreader(fname),
   d_bim_fname{find_file("bim")},
@@ -16,6 +16,8 @@ Plinkbedreader::Plinkbedreader(std::string const & fname)
   d_num_pos_read{0},
   d_bytes_per_locus{0}
 {
+  
+  d_allow_missings = miss;
   
   if (!d_file) {
     LOG(QGS::Log::FATAL) << "Cannot open input file `" << d_fname 
@@ -129,7 +131,7 @@ bool Plinkbedreader::deep_read(SNPreader::Locus & l) {
       char const val = (mask & byte) >> (offset * 2);
       switch (val) {
         case 0x00: l.data_ds[sample_idx] = dosages[0]; total_dosage += dosages[0]; break;
-        case 0x01: l.data_ds[sample_idx] = -999; break;
+        case 0x01: l.data_ds[sample_idx] = -999; if (!d_allow_missings) return false; break;
         case 0x02: l.data_ds[sample_idx] = dosages[1]; total_dosage += dosages[1]; break;
         case 0x03: l.data_ds[sample_idx] = dosages[2]; total_dosage += dosages[2]; break;
         default:
