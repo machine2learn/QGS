@@ -31,6 +31,10 @@ int main(int argc, char ** argv) {
    bool const allow_missings = args.find("allow-missings") != args.end();
    char const delimiter = args.find("delimiter") == args.end() ? ',' : args.find("delimiter")->second.at(0)[0];
    
+   bool const weighted_calculation = args.find("weight-by") != args.end();
+   std::string const weight_info_field = weighted_calculation ? args.find("weight-by")->second.at(0) : std::string();
+
+
    // verbosity
    if (args.find("trace") != args.end())
      LOGLVL(QGS::Log::TRACE);
@@ -199,6 +203,29 @@ int main(int argc, char ** argv) {
         << " deep read successful. Calculating QGS.\n";
       
       scores[sample_locus.chr][sample_locus.pos][sample_locus.ref] = QGS::score(sample_locus, reference_locus);
+
+      if (weighted_calculation) {
+        // add weight, if any
+        sample_locus.parse_info();
+        auto const weight_itt = sample_locus.pinfo.find(weight_info_field);
+        if (weight_itt == sample_locus.pinfo.end()) {
+          LOG(QGS::Log::WARNING) << "QGS: weight INFO field `"
+            <<  weight_info_field << "` not available for locus "
+            << sample_locus << ". Not including weight.\n";
+          continue;
+        }
+        try {
+          float const weight = std::stof(weight_itt->second);
+          for (auto & score : scores[sample_locus.chr][sample_locus.pos][sample_locus.ref])
+            score *= weight;
+        }
+        catch (...) {
+          LOG(QGS::Log::WARNING) << "QGS: weight INFO field `"
+            <<  weight_info_field << "` not a number for locus "
+            << sample_locus << ". Not including weight.\n";
+        }
+      }
+
     }
     
     std::map<std::size_t, std::map<std::string, std::vector<QGS::Gene_score>>>::iterator lower_bound = scores[gb.chr].lower_bound(gb.start);

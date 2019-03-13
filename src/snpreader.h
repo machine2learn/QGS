@@ -17,6 +17,7 @@ class SNPreader {
     std::size_t pos = 0;
     std::string id, ref, alt, qual, filter, info_str, format, chr_str;
     std::vector<std::string> palt;
+    std::unordered_map<std::string, std::string> pinfo;
     double maf = 0;
     std::vector<float> data_ds;
     bool switch_ar = false;
@@ -34,6 +35,17 @@ class SNPreader {
       std::string tmp;
       while (std::getline(iss, tmp, ','))
         palt.push_back(std::move(tmp));
+    }
+    
+    void parse_info() {
+      std::istringstream iss(info_str);
+      std::string tmp;
+      while (std::getline(iss, tmp, ';')) {
+        std::size_t const p = tmp.find('=');
+        if (p == std::string::npos || p == tmp.size())
+          continue;
+        pinfo[tmp.substr(0, p)] = tmp.substr(p + 1);
+      }
     }
     
     void switch_alt_ref() {

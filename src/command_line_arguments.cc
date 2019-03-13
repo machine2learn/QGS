@@ -51,6 +51,7 @@ std::unordered_map<std::string, std::vector<std::string>>  command_line_argument
   // misc
   qgs_arguments["hard-calls"] = {"force the program to use hard calls instead of DS data", 0};
   qgs_arguments["allow-missings"] = {"include loci with missing data points, printing 'nan' for those subjects/genes", 0};
+  qgs_arguments["weight-by"] = {"Weighted QGS. Provide VCF INFO field name which contains the weight for each locus, e.g. --weight-by R2", 0, "string"};
   qgs_arguments["delimiter"] = {"replace standard comma output delimiter, must be single character", 0, "string"};
   
   // version information
