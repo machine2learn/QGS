@@ -104,6 +104,11 @@ void VCFreader::parse_line(VCFreader::Locus & l) {
     else if (l.chr_str == "MT" || l.chr_str == "mt" || l.chr_str == "Mt" || l.chr_str == "mT")
       l.chr = 25;
     else {
+    
+      // parse "chr1" etc
+      if (l.chr_str.size() > 3 && l.chr_str.substr(0,3) == "chr")
+        l.chr_str = l.chr_str.substr(3);
+
       try {
         l.chr = std::stoul(l.chr_str);
         if (l.chr == 0 || l.chr > 26)
