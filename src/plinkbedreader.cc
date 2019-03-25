@@ -99,8 +99,9 @@ bool Plinkbedreader::deep_read(SNPreader::Locus & l) {
   l.data_ds.resize(d_num_samples);
   
   if (d_num_pos_read == 0) {
-    LOG(QGS::Log::FATAL) << "Plinkbedreader::deep_read: should never happen.\n";
-    std::exit(EXIT_FAILURE);
+    LOG(QGS::Log::INFO) << "Duplicate position " << l.chr << ":" <<
+      l.pos << " in file `" << d_fname << "`: ignoring all but first\n";
+    return false;
   }
 
   // remove skipped loci from read buffer

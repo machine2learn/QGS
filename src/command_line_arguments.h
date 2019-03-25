@@ -1,7 +1,7 @@
 #ifndef INCL_COMMAND_LINE_ARGUMENTS_H
 #define INCL_COMMAND_LINE_ARGUMENTS_H
 
-#define QGS_VERSION "1.02-alpha-chr"
+#define QGS_VERSION "1.05-alpha-dup"
 
 #include <unordered_map>
 #include <vector>
