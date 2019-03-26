@@ -28,7 +28,8 @@ int main(int argc, char ** argv) {
 
   // optional arguments
    bool const hard_calls = args.find("hard-calls") != args.end();
-   bool const allow_missings = args.find("allow-missings") != args.end();
+   bool const fill_missings = args.find("fill-missings") != args.end();
+   bool const allow_missings = fill_missings || args.find("allow-missings") != args.end();
    char const delimiter = args.find("delimiter") == args.end() ? ',' : args.find("delimiter")->second.at(0)[0];
    
    bool const weighted_calculation = args.find("weight-by") != args.end();
@@ -73,6 +74,19 @@ int main(int argc, char ** argv) {
     out_file << delimiter << sample_file->sample_id(sidx);
   out_file << '\n';
   
+  // Keep some statistics about how many variants are used for what
+  struct Snp_counts {
+    std::size_t read = 0,
+                outside_blocks = 0,
+                inside_blocks = 0,
+                overlapping = 0,
+                non_overlapping = 0,
+                skipped = 0,
+                filled_missing = 0,
+                used = 0;
+  } sample_counts, ref_counts;
+  
+  
   // ##### MAIN READ BLOCK
   
   Genblock gb;
@@ -107,6 +121,8 @@ int main(int argc, char ** argv) {
     
     for (;;) {
       
+      Snp_counts & data_counts = (!reference_locus.chr || reference_locus <= sample_locus) ? ref_counts : sample_counts;
+      
       if (reference_locus.chr && gb < reference_locus) {
         LOG(QGS::Log::TRACE) << "Gene: gene lies in front of current loci. Read next gene.\n";
         break;
@@ -127,8 +143,14 @@ int main(int argc, char ** argv) {
         LOG(QGS::Log::TRACE) << "Sample: read " << sample_locus << " from sample file.\n";
       }
       
-      if (sample_locus.chr != reference_locus.chr || sample_locus.pos != reference_locus.pos)
+      ++data_counts.read;
+      
+      if (sample_locus.chr != reference_locus.chr || sample_locus.pos != reference_locus.pos) {
+        ++data_counts.non_overlapping;
         continue; // no hit
+      }
+      
+      ++data_counts.overlapping;
         
       if (!snp_filter.empty()) {
         // there is an include or exclude filter
@@ -139,11 +161,15 @@ int main(int argc, char ** argv) {
           
         if (snp_include_filter && itt == snp_filter.end()) {
           LOG(QGS::Log::TRACE) << "Filter: Sample locus not in include filter. Skipping.\n";
+          ++sample_counts.skipped;
+          ++ref_counts.skipped;
           continue;
         }
 
         if (!snp_include_filter && itt != snp_filter.end()) {
           LOG(QGS::Log::TRACE) << "Filter: Sample locus in exclude filter. Skipping.\n";
+          ++sample_counts.skipped;
+          ++ref_counts.skipped;
           continue;
         }
         
@@ -153,13 +179,18 @@ int main(int argc, char ** argv) {
       if (sample_locus.chr != gb.chr || sample_locus.pos < gb.start || sample_locus.pos > gb.stop) {
         LOG(QGS::Log::TRACE) << "Match: locus " 
           << sample_locus.chr << ":" << sample_locus.pos 
-          << " does not lie within gene. skipping.\n";
+          << " does not lie within block. skipping.\n";
+        ++sample_counts.outside_blocks;
+        ++ref_counts.outside_blocks;
         continue;
       }
         
       LOG(QGS::Log::TRACE) << "Match: locus " 
         << sample_locus.chr << ":" << sample_locus.pos 
         << " found in sample and reference. Attempting deep read.\n";
+
+      ++sample_counts.inside_blocks;
+      ++ref_counts.inside_blocks;
         
       sample_locus.parse_alt();
       reference_locus.parse_alt();
@@ -168,6 +199,8 @@ int main(int argc, char ** argv) {
         LOG(QGS::Log::TRACE) << "Match: locus " 
           << sample_locus.chr << ":" << sample_locus.pos 
           << " is missing alt data: skipping locus.\n";
+        ++sample_counts.skipped;
+        ++ref_counts.skipped;
         continue;
       }
       
@@ -182,12 +215,16 @@ int main(int argc, char ** argv) {
           << sample_locus.chr << ":" << sample_locus.pos 
           << " has ref/alt mismatch between sample and reference. skipping locus.\n";
           sample_locus.clear();
+          ++sample_counts.skipped;
+          ++ref_counts.skipped;
           continue;
       }
 
       if (!sample_file->deep_read(sample_locus) || sample_locus.maf < maf_limit) {
         LOG(QGS::Log::TRACE) << "Match: sample locus excluded. skipping locus.\n";
         sample_locus.clear();
+        ++sample_counts.skipped;
+        ++ref_counts.skipped;
         continue;
       }
       
@@ -195,14 +232,33 @@ int main(int argc, char ** argv) {
         LOG(QGS::Log::TRACE) << "Match: reference locus excluded. skipping locus.\n";
         sample_locus.clear();
         reference_locus.clear();
+        ++sample_counts.skipped;
+        ++ref_counts.skipped;
         continue;
       }
       
       LOG(QGS::Log::DEBUG) << "QGS: locus " 
         << sample_locus.chr << ":" << sample_locus.pos 
         << " deep read successful. Calculating QGS.\n";
+        
+      if (fill_missings) {
+        std::size_t miss_cnt = 0;
+        for (auto & dosage : sample_locus.data_ds)
+          if (dosage < 0) {
+            ++miss_cnt;
+            dosage = 0;
+          }
+        if (miss_cnt) {
+          ++sample_counts.filled_missing;
+          LOG(QGS::Log::DEBUG) << "Filled " << miss_cnt
+            << " missing values.\n";
+        }
+      }
       
       scores[sample_locus.chr][sample_locus.pos][sample_locus.ref] = QGS::score(sample_locus, reference_locus);
+      
+      ++sample_counts.used;
+      ++ref_counts.used;
 
       if (weighted_calculation) {
         // add weight, if any
@@ -225,7 +281,6 @@ int main(int argc, char ** argv) {
             << sample_locus << ". Not including weight.\n";
         }
       }
-
     }
     
     std::map<std::size_t, std::map<std::string, std::vector<QGS::Gene_score>>>::iterator lower_bound = scores[gb.chr].lower_bound(gb.start);
@@ -269,7 +324,39 @@ int main(int argc, char ** argv) {
     out_file << '\n';
 
   }
+  
+  std::cout << std::setprecision(3);
+  std::cout << "Sample statistics:\n" 
+    << "  Read: " << sample_counts.read << "\n"
+    << "  Used: " << sample_counts.used << " (" 
+    << (sample_counts.used * 100.0) / sample_counts.read << "%)\n"
+    << "  Overlapping: " << sample_counts.overlapping << " (" 
+    << (sample_counts.overlapping * 100.0) / sample_counts.read << "%)\n"
+    << "  Non-overlapping: " << sample_counts.non_overlapping << " (" 
+    << (sample_counts.non_overlapping * 100.0) / sample_counts.read << "%)\n"
+    << "  Skipped: " << sample_counts.skipped << " (" 
+    << (sample_counts.skipped * 100.0) / sample_counts.read << "%)\n"
+    << "  Inside regions: " << sample_counts.inside_blocks << " (" 
+    << (sample_counts.inside_blocks * 100.0) / sample_counts.read << "%)\n"
+    << "  Outside regions: " << sample_counts.outside_blocks << " (" 
+    << (sample_counts.outside_blocks * 100.0) / sample_counts.read << "%)\n"
+    << "  With missings: " << sample_counts.filled_missing << " (" 
+    << (sample_counts.filled_missing * 100.0) / sample_counts.read << "%)\n\n";
+    
+  std::cout << "Reference statistics:\n" 
+    << "  Read: " << ref_counts.read << "\n"
+    << "  Used: " << sample_counts.used << " (" 
+    << (ref_counts.used * 100.0) / ref_counts.read << "%)\n"
+    << "  Overlapping: " << ref_counts.overlapping << " (" 
+    << (ref_counts.overlapping * 100.0) / ref_counts.read << "%)\n"
+    << "  Non-overlapping: " << ref_counts.non_overlapping << " (" 
+    << (ref_counts.non_overlapping * 100.0) / ref_counts.read << "%)\n"
+    << "  Skipped: " << ref_counts.skipped << " (" 
+    << (ref_counts.skipped * 100.0) / ref_counts.read << "%)\n"
+    << "  Inside regions: " << ref_counts.inside_blocks << " (" 
+    << (ref_counts.inside_blocks * 100.0) / ref_counts.read << "%)\n"
+    << "  Outside regions: " << ref_counts.outside_blocks << " (" 
+    << (ref_counts.outside_blocks * 100.0) / ref_counts.read << "%)\n\n";
 
-
-  std::cout << "\nRun completed\n";
+  std::cout << "Run completed\n";
 }
