@@ -210,6 +210,10 @@ int main(int argc, char ** argv) {
         LOG(QGS::Log::TRACE) << "Match: locus " 
           << sample_locus.chr << ":" << sample_locus.pos 
           << " has flipped ref/alt data. Correcting.\n";
+          
+          // erase variant with wrong ref from read history
+          scores[sample_locus.chr][sample_locus.pos].erase(sample_locus.ref);
+
           sample_locus.switch_alt_ref();
       }
       else if (sample_locus.ref != reference_locus.ref || reference_locus.palt[0] != sample_locus.palt[0]) {
