@@ -124,7 +124,7 @@ int main(int argc, char ** argv) {
       
       Snp_counts & data_counts = (!reference_locus.chr || reference_locus <= sample_locus) ? ref_counts : sample_counts;
       
-      if (reference_locus.chr && gb < reference_locus) {
+      if (reference_locus.chr && gb < reference_locus && gb < sample_locus) {
         LOG(QGS::Log::TRACE) << "Gene: gene lies in front of current loci. Read next gene.\n";
         break;
       }
