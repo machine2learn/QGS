@@ -31,6 +31,7 @@ int main(int argc, char ** argv) {
    bool const fill_missings = args.find("fill-missings") != args.end();
    bool const allow_missings = fill_missings || args.find("allow-missings") != args.end();
    char const delimiter = args.find("delimiter") == args.end() ? ',' : args.find("delimiter")->second.at(0)[0];
+   bool const output_variants = args.find("output_variants") != args.end();
    
    bool const weighted_calculation = args.find("weight-by") != args.end();
    std::string const weight_info_field = weighted_calculation ? args.find("weight-by")->second.at(0) : std::string();
@@ -141,6 +142,7 @@ int main(int argc, char ** argv) {
           continue;
         }
         LOG(QGS::Log::TRACE) << "Sample: read " << sample_locus << " from sample file.\n";
+        scores[sample_locus.chr][sample_locus.pos][sample_locus.ref] = {};
       }
       
       ++data_counts.read;
@@ -288,14 +290,18 @@ int main(int argc, char ** argv) {
     
     std::vector<QGS::Gene_score> total_score;
     total_score.resize(sample_file->num_samples(), 0);
+    std::ostringstream used_loci, unused_loci;
     std::size_t snp_cnt = 0, total_snp_cnt = 0;
     for (auto itt_pos : scores[gb.chr]) {
       if (itt_pos.first > gb.stop)
         break;
       for (auto itt_var : itt_pos.second) {
         ++total_snp_cnt;
-        if (itt_var.second.empty())
+        if (itt_var.second.empty()) {
+          unused_loci << "|" << gb.chr << ":" << itt_pos.first << ":" << itt_var.first;
           continue;
+        }
+        used_loci << "|" << gb.chr << ":" << itt_pos.first << ":" << itt_var.first;
         ++snp_cnt;
         for (std::size_t sample_idx = 0; sample_idx != total_score.size(); ++sample_idx) {
           if (itt_var.second[sample_idx] < 0 || total_score[sample_idx] < 0)
@@ -306,6 +312,9 @@ int main(int argc, char ** argv) {
       }
     }
     
+    LOG(QGS::Log::DEBUG) << "Loci included in " << gb.attr["gene_id"] << ": " << used_loci.str().substr(1) << "\n";
+    LOG(QGS::Log::DEBUG) << "Loci not included in " << gb.attr["gene_id"] << ": " << unused_loci.str().substr(1) << "\n";
+
     if (!snp_cnt) {
       LOG(QGS::Log::TRACE) << "Gene: No loci in " << gb.attr["gene_id"]  << ": skipping.\n";
       continue;
@@ -314,7 +323,7 @@ int main(int argc, char ** argv) {
     LOG(QGS::Log::VERBOSE) << "QGS: Outputting QGS for " << gb.attr["gene_id"] << " (" << gb.chr << ':' << gb.start << '-' << gb.stop << ") based on "  << snp_cnt << "/" << total_snp_cnt << " loci.\n";
 
     out_file << gb.attr["gene_name"] << delimiter << gb.attr["gene_id"] << delimiter << gb.chr << delimiter 
-             << gb.start << delimiter << gb.stop << delimiter << sample_file->num_samples() << delimiter << reference_file->num_samples() << delimiter << snp_cnt << delimiter << total_snp_cnt;
+             << gb.start << delimiter << gb.stop << delimiter << sample_file->num_samples() << delimiter << reference_file->num_samples() << delimiter << (output_variants ? used_loci.str().substr(1) : std::to_string(snp_cnt)) << delimiter << total_snp_cnt;
     for (auto const & score : total_score) {
       if (score < 0)
         out_file << delimiter << "NaN"; // missing data point

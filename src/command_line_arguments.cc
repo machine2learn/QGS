@@ -33,8 +33,8 @@ std::unordered_map<std::string, std::vector<std::string>>  command_line_argument
 
   // defaulted arguments
   qgs_arguments["flank"] = {"symmetrical flanking region in kb", 0, "uint", "0"};
-  qgs_arguments["pre-flank"] = {"asymmetrical flanking region in kb", 0, "uint"};
-  qgs_arguments["post-flank"] = {"asymmetrical flanking region in kb", 0, "uint"};
+  qgs_arguments["pre-flank"] = {"asymmetrical pre-region flanking region in kb", 0, "uint"};
+  qgs_arguments["post-flank"] = {"asymmetrical post-region flanking region in kb", 0, "uint"};
   qgs_arguments["maf"] = {"minor allele frequency threshold", 0, "double", "0.01"};
   
   // filter options
@@ -54,6 +54,7 @@ std::unordered_map<std::string, std::vector<std::string>>  command_line_argument
   qgs_arguments["fill-missings"] = {"include loci with missing data points, assuming 0/0 for any missing variant", 0};
   qgs_arguments["weight-by"] = {"Weighted QGS. Provide VCF INFO field name which contains the weight for each locus, e.g. --weight-by R2", 0, "string"};
   qgs_arguments["delimiter"] = {"replace standard comma output delimiter, must be single character", 0, "string"};
+  qgs_arguments["output-variants"] = {"include variants used for the QGS in output file", 0};
   
   // version information
   if (options.find("version") != options.end()) {
