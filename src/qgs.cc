@@ -31,7 +31,7 @@ int main(int argc, char ** argv) {
    bool const fill_missings = args.find("fill-missings") != args.end();
    bool const allow_missings = fill_missings || args.find("allow-missings") != args.end();
    char const delimiter = args.find("delimiter") == args.end() ? ',' : args.find("delimiter")->second.at(0)[0];
-   bool const output_variants = args.find("output_variants") != args.end();
+   bool const output_variants = args.find("output-variants") != args.end();
    
    bool const weighted_calculation = args.find("weight-by") != args.end();
    std::string const weight_info_field = weighted_calculation ? args.find("weight-by")->second.at(0) : std::string();
