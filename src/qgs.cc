@@ -312,8 +312,15 @@ int main(int argc, char ** argv) {
       }
     }
     
-    LOG(QGS::Log::DEBUG) << "Loci included in " << gb.attr["gene_id"] << ": " << used_loci.str().substr(1) << "\n";
-    LOG(QGS::Log::DEBUG) << "Loci not included in " << gb.attr["gene_id"] << ": " << unused_loci.str().substr(1) << "\n";
+    std::string used_loci_s = used_loci.str();
+    if (!used_loci_s.empty())
+      used_loci_s = used_loci_s.substr(1);
+    std::string unused_loci_s = unused_loci.str();
+    if (!unused_loci_s.empty())
+      unused_loci_s = unused_loci_s.substr(1);
+    
+    LOG(QGS::Log::DEBUG) << "Loci included in " << gb.attr["gene_id"] << ": " << used_loci_s << "\n";
+    LOG(QGS::Log::DEBUG) << "Loci not included in " << gb.attr["gene_id"] << ": " << unused_loci_s << "\n";
 
     if (!snp_cnt) {
       LOG(QGS::Log::TRACE) << "Gene: No loci in " << gb.attr["gene_id"]  << ": skipping.\n";
@@ -323,7 +330,7 @@ int main(int argc, char ** argv) {
     LOG(QGS::Log::VERBOSE) << "QGS: Outputting QGS for " << gb.attr["gene_id"] << " (" << gb.chr << ':' << gb.start << '-' << gb.stop << ") based on "  << snp_cnt << "/" << total_snp_cnt << " loci.\n";
 
     out_file << gb.attr["gene_name"] << delimiter << gb.attr["gene_id"] << delimiter << gb.chr << delimiter 
-             << gb.start << delimiter << gb.stop << delimiter << sample_file->num_samples() << delimiter << reference_file->num_samples() << delimiter << (output_variants ? used_loci.str().substr(1) : std::to_string(snp_cnt)) << delimiter << total_snp_cnt;
+             << gb.start << delimiter << gb.stop << delimiter << sample_file->num_samples() << delimiter << reference_file->num_samples() << delimiter << (output_variants ? used_loci_s : std::to_string(snp_cnt)) << delimiter << total_snp_cnt;
     for (auto const & score : total_score) {
       if (score < 0)
         out_file << delimiter << "NaN"; // missing data point
