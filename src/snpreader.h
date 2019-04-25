@@ -6,6 +6,7 @@
 #include <iosfwd>
 #include <vector>
 #include <sstream>
+#include <utility> // swap
 #include <unordered_map>
 
 class SNPreader {
@@ -50,6 +51,8 @@ class SNPreader {
     
     void switch_alt_ref() {
       switch_ar = true;
+      if (!palt.empty())
+        std::swap(palt[0], ref);
     }
   };
   
