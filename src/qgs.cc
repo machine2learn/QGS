@@ -16,8 +16,8 @@ int main(int argc, char ** argv) {
   
   // default arguments
   std::size_t const flank = std::stoull(args.find("flank")->second.at(0));
-  std::size_t const pre_flank = args.find("pre-flank") != args.end() ? std::stoull(args.find("pre-flank")->second.at(0)) : flank;
-  std::size_t const post_flank = args.find("post-flank") != args.end() ? std::stoull(args.find("post-flank")->second.at(0)) : flank;
+  std::size_t const pre_flank = 1000 * (args.find("pre-flank") != args.end() ? std::stoull(args.find("pre-flank")->second.at(0)) : flank);
+  std::size_t const post_flank = 1000 * (args.find("post-flank") != args.end() ? std::stoull(args.find("post-flank")->second.at(0)) : flank);
   double const maf_limit = std::stod(args.find("maf")->second.at(0));
   
   // filter arguments
