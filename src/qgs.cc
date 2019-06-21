@@ -96,7 +96,15 @@ int main(int argc, char ** argv) {
   
   std::map<std::size_t, std::map<std::size_t, std::map<std::string, std::vector<QGS::Gene_score>>>> scores;
 
-  while (*sample_file && *reference_file && gene_file >> gb) {
+  while (*sample_file && *reference_file) {
+
+    if (!(gene_file >> gb)) {
+      if (gene_file.handle().eof())
+        break;
+      gene_file.handle().clear();
+      LOG(QGS::Log::TRACE) << "Failed to read line from gene file. Skipping.\n";
+      continue;
+    }
 
     LOG(QGS::Log::TRACE) << "Gene: read " << gb << " from gene file.\n";
     

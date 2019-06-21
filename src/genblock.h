@@ -43,7 +43,6 @@ inline std::istream & operator>>(std::istream & in, Genblock & g) {
   
   std::string line;
   if (!std::getline(in, line)) {
-    in.setstate(std::ios::failbit);
     return in;
   }
   
