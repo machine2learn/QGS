@@ -1,7 +1,7 @@
 #ifndef INCL_COMMAND_LINE_ARGUMENTS_H
 #define INCL_COMMAND_LINE_ARGUMENTS_H
 
-#define QGS_VERSION "1.10-alpha-no-line-abort"
+#define QGS_VERSION "1.11-alpha-weights!"
 
 #include <unordered_map>
 #include <vector>

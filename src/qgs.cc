@@ -93,8 +93,13 @@ int main(int argc, char ** argv) {
   Genblock gb;
 
   SNPreader::Locus sample_locus, reference_locus;
+
+  struct Scores {
+    std::vector<QGS::Gene_score> scores;
+    float weight = 1;
+  };
   
-  std::map<std::size_t, std::map<std::size_t, std::map<std::string, std::vector<QGS::Gene_score>>>> scores;
+  std::map<std::size_t, std::map<std::size_t, std::map<std::string, Scores>>> scores;
 
   while (*sample_file && *reference_file) {
 
@@ -269,7 +274,7 @@ int main(int argc, char ** argv) {
         }
       }
       
-      scores[sample_locus.chr][sample_locus.pos][sample_locus.ref] = QGS::score(sample_locus, reference_locus);
+      scores[sample_locus.chr][sample_locus.pos][sample_locus.ref].scores = QGS::score(sample_locus, reference_locus);
       
       ++sample_counts.used;
       ++ref_counts.used;
@@ -286,8 +291,9 @@ int main(int argc, char ** argv) {
         }
         try {
           float const weight = std::stof(weight_itt->second);
-          for (auto & score : scores[sample_locus.chr][sample_locus.pos][sample_locus.ref])
+          for (auto & score : scores[sample_locus.chr][sample_locus.pos][sample_locus.ref].scores)
             score *= weight;
+          scores[sample_locus.chr][sample_locus.pos][sample_locus.ref].weight = weight;
         }
         catch (...) {
           LOG(QGS::Log::WARNING) << "QGS: weight INFO field `"
@@ -297,29 +303,35 @@ int main(int argc, char ** argv) {
       }
     }
     
-    std::map<std::size_t, std::map<std::string, std::vector<QGS::Gene_score>>>::iterator lower_bound = scores[gb.chr].lower_bound(gb.start);
+    auto lower_bound = scores[gb.chr].lower_bound(gb.start);
     scores[gb.chr].erase(scores[gb.chr].begin(), lower_bound);
     
     std::vector<QGS::Gene_score> total_score;
     total_score.resize(sample_file->num_samples(), 0);
     std::ostringstream used_loci, unused_loci;
     std::size_t snp_cnt = 0, total_snp_cnt = 0;
+    long double correction_factor = 0, addition_factor = 0;
     for (auto itt_pos : scores[gb.chr]) {
       if (itt_pos.first > gb.stop)
         break;
       for (auto itt_var : itt_pos.second) {
         ++total_snp_cnt;
-        if (itt_var.second.empty()) {
+        if (itt_var.second.scores.empty()) {
           unused_loci << "|" << gb.chr << ":" << itt_pos.first << ":" << itt_var.first;
           continue;
         }
         used_loci << "|" << gb.chr << ":" << itt_pos.first << ":" << itt_var.first;
         ++snp_cnt;
+        if (itt_var.second.weight < 0)
+          addition_factor += -2 * itt_var.second.weight;
+        else
+          correction_factor += 2 * itt_var.second.weight;
         for (std::size_t sample_idx = 0; sample_idx != total_score.size(); ++sample_idx) {
-          if (itt_var.second[sample_idx] < 0 || total_score[sample_idx] < 0)
+          if (itt_var.second.scores[sample_idx] < 0 || total_score[sample_idx] < 0)
             total_score[sample_idx] = -99;
-          else
-            total_score[sample_idx] += itt_var.second[sample_idx];
+          else {
+            total_score[sample_idx] += itt_var.second.scores[sample_idx];
+          }
         }
       }
     }
@@ -343,11 +355,12 @@ int main(int argc, char ** argv) {
 
     out_file << gb.attr["gene_name"] << delimiter << gb.attr["gene_id"] << delimiter << gb.chr << delimiter 
              << gb.start << delimiter << gb.stop << delimiter << sample_file->num_samples() << delimiter << reference_file->num_samples() << delimiter << (output_variants ? used_loci_s : std::to_string(snp_cnt)) << delimiter << total_snp_cnt;
+
     for (auto const & score : total_score) {
       if (score < 0)
         out_file << delimiter << "NaN"; // missing data point
       else
-        out_file << delimiter << score / (2 * snp_cnt * reference_file->num_samples());
+        out_file << delimiter << (score + addition_factor) / (correction_factor * reference_file->num_samples() + addition_factor);
     }
     out_file << '\n';
 
