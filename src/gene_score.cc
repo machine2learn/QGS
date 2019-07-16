@@ -20,8 +20,8 @@ std::vector<Gene_score> score(
     
     auto const dosage = sample_locus.data_ds[sample_idx];
     
-    if (dosage < 0) {
-      out[sample_idx] = -99;
+    if (std::isnan(dosage)) {
+      out[sample_idx] = NAN;
       continue; // missing data point, set as NAN
     }
 

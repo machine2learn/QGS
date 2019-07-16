@@ -327,8 +327,8 @@ int main(int argc, char ** argv) {
         else
           correction_factor += 2 * itt_var.second.weight;
         for (std::size_t sample_idx = 0; sample_idx != total_score.size(); ++sample_idx) {
-          if (itt_var.second.scores[sample_idx] < 0 || total_score[sample_idx] < 0)
-            total_score[sample_idx] = -99;
+          if (std::isnan(itt_var.second.scores[sample_idx]) || std::isnan(total_score[sample_idx]))
+            total_score[sample_idx] = NAN;
           else {
             total_score[sample_idx] += itt_var.second.scores[sample_idx];
           }
@@ -351,16 +351,22 @@ int main(int argc, char ** argv) {
       continue;
     }
 
+    double constexpr eps = 0.00001; // some small value
+    if (correction_factor < eps && addition_factor < eps) {
+      LOG(QGS::Log::TRACE) << "Gene: No loci with sufficient weights in " << gb.attr["gene_id"]  << ": skipping.\n";
+      continue;
+    }
+
     LOG(QGS::Log::VERBOSE) << "QGS: Outputting QGS for " << gb.attr["gene_id"] << " (" << gb.chr << ':' << gb.start << '-' << gb.stop << ") based on "  << snp_cnt << "/" << total_snp_cnt << " loci.\n";
 
     out_file << gb.attr["gene_name"] << delimiter << gb.attr["gene_id"] << delimiter << gb.chr << delimiter 
              << gb.start << delimiter << gb.stop << delimiter << sample_file->num_samples() << delimiter << reference_file->num_samples() << delimiter << (output_variants ? used_loci_s : std::to_string(snp_cnt)) << delimiter << total_snp_cnt;
 
     for (auto const & score : total_score) {
-      if (score < 0)
+      if (std::isnan(score))
         out_file << delimiter << "NaN"; // missing data point
       else
-        out_file << delimiter << (score + addition_factor) / (correction_factor * reference_file->num_samples() + addition_factor);
+        out_file << delimiter << (score + addition_factor * reference_file->num_samples()) / (correction_factor * reference_file->num_samples() + addition_factor * reference_file->num_samples());
     }
     out_file << '\n';
 

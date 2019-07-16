@@ -31,10 +31,12 @@ bool VCFreader::parse_header() {
   }
   
   std::string line;
+  bool found_format_tag = false;
   while (std::getline(d_file.handle(), line)) {
     
     // find formats in file
     if (line.substr(0, 9) == "##FORMAT=") {
+      found_format_tag = true;
       if (!d_hard_calls && line.find("ID=DS") != std::string::npos)
         d_format = "DS"; // preferred format
 //      else if (d_format != "DS" && line.find("ID=GP") != std::string::npos)
@@ -70,6 +72,10 @@ bool VCFreader::parse_header() {
                              "Found " << d_num_samples << " subjects.\n";
   
   if (d_format.empty()) {
+    if (!found_format_tag) {
+      LOG(QGS::Log::FATAL) << "VCF file `" << d_fname << "` "
+        << "does not contain a FORMAT tag in the header. Add one.\n";
+    }
     LOG(QGS::Log::FATAL) << "No supported data format ("
       << (d_hard_calls ? "GT" : "GT, DS")
       << ") found in file " << d_fname << ": Can't use input file.\n";
@@ -206,7 +212,7 @@ bool VCFreader::read_gt(VCFreader::Locus & l) {
       if (!d_allow_missings)
         return false; // exclude snp
 
-      l.data_ds[idx/2] = -99; // missing, might change to -98 later
+      l.data_ds[idx/2] = NAN; // missing
 
       continue;
     }
