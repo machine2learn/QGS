@@ -2,6 +2,7 @@
 #include <sstream>
 #include <ostream>
 #include <iostream>
+#include <cmath> // NAN
 #include "log.h"
 
 

@@ -16,6 +16,7 @@
 #include <boost/algorithm/string/predicate.hpp> // ends_with
 #include <iomanip>
 #include <iostream>
+#include <cmath> // NAN
 #include "log.h"
 
 inline std::unique_ptr<SNPreader> open_genetics_file(std::vector<std::string> const & files, bool hard_calls = 0, bool allow_missings = 0) {
