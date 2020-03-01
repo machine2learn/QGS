@@ -47,7 +47,7 @@ int main(int argc, char ** argv) {
 
   // ##### OPEN INPUT AND OUTPUT FILES
   
-  std::ofstream out_file(fname_out);
+  GZofile out_file(fname_out);
   if (!out_file) {
     LOG(QGS::Log::FATAL) << "Cannot open output file `" 
       << fname_out << "` for writing.\n";

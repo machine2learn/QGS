@@ -60,4 +60,57 @@ GZfile & operator>>(GZfile & gzfile, T & t) {
   return gzfile;
 }
 
+
+class GZofile {
+  bool d_gz;
+  std::unique_ptr<std::ofstream> d_file;
+  std::unique_ptr<boost::iostreams::filtering_streambuf<boost::iostreams::output>> d_gzf;
+  std::unique_ptr<std::ostream> d_handle;
+  
+  public:
+  
+  GZofile(std::string const & fname)
+  :
+    d_gz{fname.length() > 2 && fname.substr(fname.length() - 3) == ".gz"},
+    d_file{std::unique_ptr<std::ofstream>(new std::ofstream(fname, d_gz ? std::ios::binary : std::ios::out))}, // make_unique
+    d_gzf{std::unique_ptr<boost::iostreams::filtering_streambuf<boost::iostreams::output>>(new boost::iostreams::filtering_streambuf<boost::iostreams::output>())}, // make_unique
+    d_handle{std::unique_ptr<std::ostream>(new std::ostream(d_gzf.get()))} // make_unique
+  {
+    if (d_gz)
+      d_gzf->push(boost::iostreams::gzip_compressor());
+    d_gzf->push(*d_file);
+  }
+
+  GZofile(GZofile && tmp) :
+    d_gz{tmp.d_gz},
+    d_file(std::move(tmp.d_file)),
+    d_gzf(std::move(tmp.d_gzf)),
+    d_handle(std::move(tmp.d_handle))
+  {
+  }
+
+  GZofile & operator=(GZofile && tmp) {
+    std::swap(d_gz, tmp.d_gz);
+    std::swap(d_file, tmp.d_file);
+    std::swap(d_gzf, tmp.d_gzf);
+    std::swap(d_handle, tmp.d_handle);
+    return *this;
+  }
+  
+  std::ostream & handle() {
+    return *d_handle;
+  };
+  
+  operator bool() const {
+    return *d_file && *d_handle;
+  }
+};
+
+template <typename T>
+GZofile & operator<<(GZofile & gzfile, T const & t) {
+  gzfile.handle() << t;
+  return gzfile;
+}
+
+
 #endif
