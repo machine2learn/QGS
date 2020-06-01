@@ -97,6 +97,7 @@ int main(int argc, char ** argv) {
   struct Scores {
     std::vector<QGS::Gene_score> scores;
     float weight = 1;
+    std::string id;
   };
   
   std::map<std::size_t, std::map<std::size_t, std::map<std::string, Scores>>> scores;
@@ -275,6 +276,7 @@ int main(int argc, char ** argv) {
       }
       
       scores[sample_locus.chr][sample_locus.pos][sample_locus.ref].scores = QGS::score(sample_locus, reference_locus);
+      scores[sample_locus.chr][sample_locus.pos][sample_locus.ref].id = sample_locus.id + "/" + reference_locus.id;
       
       ++sample_counts.used;
       ++ref_counts.used;
@@ -320,7 +322,7 @@ int main(int argc, char ** argv) {
           unused_loci << "|" << gb.chr << ":" << itt_pos.first << ":" << itt_var.first;
           continue;
         }
-        used_loci << "|" << gb.chr << ":" << itt_pos.first << ":" << itt_var.first;
+        used_loci << "|" << gb.chr << ":" << itt_pos.first << ":" << itt_var.first << "(" << itt_var.second.id << ")";
         ++snp_cnt;
         if (itt_var.second.weight < 0)
           addition_factor += -2 * itt_var.second.weight;
