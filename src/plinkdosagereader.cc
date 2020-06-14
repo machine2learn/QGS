@@ -128,6 +128,10 @@ bool Plinkdosagereader::deep_read(SNPreader::Locus & l) {
     std::swap(l.data_ds, data);
     long double const sum = std::accumulate(std::begin(l.data_ds), std::end(l.data_ds), 0.0L);
     l.maf = sum / (d_num_samples * 2);
+    if (l.maf > 0.5) {
+      LOG(QGS::Log::TRACE) << "Flipped MAF (" << l.maf << ") for " << l << '\n';
+      l.maf = 1 - l.maf;
+    }
     return true;
   }
   
@@ -175,6 +179,10 @@ bool Plinkdosagereader::deep_read(SNPreader::Locus & l) {
     
     long double const sum = std::accumulate(std::begin(l.data_ds), std::end(l.data_ds), 0.0L);
     l.maf = sum / (d_num_samples * 2);
+    if (l.maf > 0.5) {
+      LOG(QGS::Log::TRACE) << "Flipped MAF (" << l.maf << ") for " << l << '\n';
+      l.maf = 1 - l.maf;
+    }
 
     return true;
   }
@@ -201,6 +209,10 @@ bool Plinkdosagereader::deep_read(SNPreader::Locus & l) {
     
     long double const sum = std::accumulate(std::begin(l.data_ds), std::end(l.data_ds), 0.0L);
     l.maf = sum / (d_num_samples * 2);
+    if (l.maf > 0.5) {
+      LOG(QGS::Log::TRACE) << "Flipped MAF (" << l.maf << ") for " << l << '\n';
+      l.maf = 1 - l.maf;
+    }
 
     return true;
   }

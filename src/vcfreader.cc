@@ -400,6 +400,8 @@ bool VCFreader::read_plink(VCFreader::Locus & l) {
     if (!correct_read)
       return false;
       
+    if (l.switch_ar)
+      l.data_ds[sample_idx] = 2 - l.data_ds[sample_idx];
     ds_sum += l.data_ds[sample_idx];
     ++sample_idx;
   }

@@ -146,6 +146,10 @@ bool Plinkbedreader::deep_read(SNPreader::Locus & l) {
   }
   
   l.maf = total_dosage / (d_num_samples * 2);
+  if (l.maf > 0.5) {
+    LOG(QGS::Log::TRACE) << "Flipped MAF (" << l.maf << ") for " << l << '\n';
+    l.maf = 1 - l.maf;
+  }
   
   return true;
 }
