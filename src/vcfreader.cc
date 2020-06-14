@@ -250,6 +250,10 @@ bool VCFreader::read_gt(VCFreader::Locus & l) {
   }
 
   l.maf = ds_sum / (d_num_samples * 2.0 - male_unilog);
+  if (l.maf > 0.5) {
+    LOG(QGS::Log::WARNING) << "FLIPPED MAP FOR " << l << '\n';
+    l.maf = 1 - l.maf;
+  }
 
   return true;
 }

@@ -345,9 +345,6 @@ int main(int argc, char ** argv) {
     if (!unused_loci_s.empty())
       unused_loci_s = unused_loci_s.substr(1);
     
-    LOG(QGS::Log::DEBUG) << "Loci included in " << gb.attr["gene_id"] << ": " << used_loci_s << "\n";
-    LOG(QGS::Log::DEBUG) << "Loci not included in " << gb.attr["gene_id"] << ": " << unused_loci_s << "\n";
-
     if (!snp_cnt) {
       LOG(QGS::Log::TRACE) << "Gene: No loci in " << gb.attr["gene_id"]  << ": skipping.\n";
       continue;
@@ -358,6 +355,9 @@ int main(int argc, char ** argv) {
       LOG(QGS::Log::TRACE) << "Gene: No loci with sufficient weights in " << gb.attr["gene_id"]  << ": skipping.\n";
       continue;
     }
+
+    LOG(QGS::Log::DEBUG) << "Loci included in " << gb.attr["gene_id"] << ": " << used_loci_s << "\n";
+    LOG(QGS::Log::DEBUG) << "Loci not included in " << gb.attr["gene_id"] << ": " << unused_loci_s << "\n";
 
     LOG(QGS::Log::VERBOSE) << "QGS: Outputting QGS for " << gb.attr["gene_id"] << " (" << gb.chr << ':' << gb.start << '-' << gb.stop << ") based on "  << snp_cnt << "/" << total_snp_cnt << " loci.\n";
 
