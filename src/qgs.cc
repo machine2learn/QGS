@@ -241,7 +241,10 @@ int main(int argc, char ** argv) {
       }
 
       if (!sample_file->deep_read(sample_locus) || sample_locus.maf < maf_limit) {
-        LOG(QGS::Log::TRACE) << "Match: sample locus excluded. skipping locus.\n";
+        if (sample_locus.maf < maf_limit)
+          LOG(QGS::Log::TRACE) << "Match: sample locus MAF below filter (" << sample_locus.maf << ").\n";
+        else
+          LOG(QGS::Log::TRACE) << "Match: sample locus excluded. Skipping locus.\n";
         sample_locus.clear();
         ++sample_counts.skipped;
         ++ref_counts.skipped;
@@ -249,7 +252,10 @@ int main(int argc, char ** argv) {
       }
       
       if (!reference_file->deep_read(reference_locus) || reference_locus.maf < maf_limit) {
-        LOG(QGS::Log::TRACE) << "Match: reference locus excluded. skipping locus.\n";
+        if (reference_locus.maf < maf_limit)
+          LOG(QGS::Log::TRACE) << "Match: reference locus MAF below filter (" << reference_locus.maf << ").\n";
+        else
+          LOG(QGS::Log::TRACE) << "Match: reference locus excluded. Skipping locus.\n";
         sample_locus.clear();
         reference_locus.clear();
         ++sample_counts.skipped;

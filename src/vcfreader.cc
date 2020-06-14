@@ -16,6 +16,8 @@ VCFreader::VCFreader(std::string const & fname, bool hard, bool miss)
 }
 
 bool VCFreader::deep_read(VCFreader::Locus & l) {
+  if (d_format == "PLINK")
+    return read_plink(l);
   if (d_format == "GT")
     return read_gt(l);
   if (d_format == "DS")
@@ -35,13 +37,21 @@ bool VCFreader::parse_header() {
   bool found_format_tag = false;
   while (std::getline(d_file.handle(), line)) {
     
+    if (line.substr(0, 14) == "##source=PLINK") {
+      LOG(QGS::Log::WARNING)
+        << "File `" << d_fname << "` was created by PLINK\n"
+        << "PLINK implementation of VCF files is broken, attempting work-around\n"
+        << "As a result, the options --hard-calls and --allow-missings are ignored\n"
+        << "To remove this warning and disable the work-around, remove any lines "
+        << "starting with `##source=PLINK` from VCF file.\n";
+      d_format = "PLINK";
+    }
+
     // find formats in file
     if (line.substr(0, 9) == "##FORMAT=") {
       found_format_tag = true;
-      if (!d_hard_calls && line.find("ID=DS") != std::string::npos)
+      if (d_format != "PLINK" && !d_hard_calls && line.find("ID=DS") != std::string::npos)
         d_format = "DS"; // preferred format
-//      else if (d_format != "DS" && line.find("ID=GP") != std::string::npos)
-//        d_format = "GP";
       else if (d_format.empty() && line.find("ID=GT") != std::string::npos)
         d_format = "GT"; // least preferred format
       continue;
@@ -284,7 +294,6 @@ bool VCFreader::read_ds(VCFreader::Locus & l) {
   std::size_t idx = 0;
   char c;
 
-  std::unordered_map<char, std::size_t> maf_count;
   std::size_t colon_count = 0;
   long double ds_sum = 0;
   while (d_buffer.get(c)) {
@@ -295,8 +304,9 @@ bool VCFreader::read_ds(VCFreader::Locus & l) {
     if (colon_count == gt_idx) {
       float ds;
       if (!(d_buffer >> ds)) {
-        LOG(QGS::Log::WARNING) << "failed to read ds float\n";
-        std::exit(EXIT_FAILURE);
+        LOG(QGS::Log::WARNING) << "Failed to read " << l << "\n";
+        LOG(QGS::Log::WARNING) << "Something is wrong with the VCF file. Skipping locus. \n";
+        return false;
       }
       
       if (l.switch_ar)
@@ -325,5 +335,87 @@ bool VCFreader::read_ds(VCFreader::Locus & l) {
     l.maf = 1 - l.maf;
   }
   return true;
+}
+
+bool VCFreader::read_plink(VCFreader::Locus & l) {
+  
+
+  if (!d_buffer && !l.data_ds.empty()) {
+    LOG(QGS::Log::DEBUG) << "Request to read same position twice: duplicate snp position in sample file?\n";
+    return true;
+  }
+
+  l.data_ds.clear(); // not needed, strictly
+  l.data_ds.resize(d_num_samples, 0);
+  
+  // parse format
+  std::vector<std::string> format;
+  std::size_t p1 = 0, p2 = 0;
+  for (; (p2 = l.format.find(":", p1)) != std::string::npos; p1 = p2 + 1)
+    format.push_back(l.format.substr(p1, p2 - p1));
+  format.push_back(l.format.substr(p1));
+
+  std::string genostr;
+  std::size_t sample_idx = 0;
+  long double ds_sum = 0;
+  while (d_buffer >> genostr) {
+    
+    // parse genostr
+    std::unordered_map<std::string, std::string> genotype;
+    std::size_t idx = 0;
+    for (p1 = 0, p2 = 0; (p2 = genostr.find(":", p1)) != std::string::npos; p1 = p2 + 1)
+      genotype[format.at(idx++)] = genostr.substr(p1, p2 - p1);
+    genotype[format.at(idx++)] = genostr.substr(p1);
+    
+    // parse genotype
+    bool correct_read = false;
+    auto itt = genotype.find("DS");
+    if (itt != genotype.end()) {
+      // dosage available
+      try {
+        l.data_ds[sample_idx] = std::stof(itt->second);
+        correct_read = true;
+      }
+      catch (...) {
+        LOG(QGS::Log::DEBUG) << "Failed to read " << l << "\n";
+        LOG(QGS::Log::DEBUG) << "Something is wrong with the VCF file (ds). Trying GT.\n";
+      }
+    }
+    if (!correct_read && (itt = genotype.find("GT")) != genotype.end()) {
+      // genotype available
+      try {
+        int const gt1 = itt->second.at(0) - '0';
+        int const gt2 = itt->second.at(2) - '0';
+        if (gt1 < 0 || gt1 > 1 || gt2 < 0 || gt2 > 1)
+          throw "Parse error";
+        l.data_ds[sample_idx] = gt1 + gt2;
+        correct_read = true;
+      }
+      catch (...) {
+        LOG(QGS::Log::WARNING) << "Failed to read " << l << "\n";
+        LOG(QGS::Log::WARNING) << "Something is wrong with the VCF file (gt). Skipping locus. \n";
+      }
+    }
+    
+    if (!correct_read)
+      return false;
+      
+    ds_sum += l.data_ds[sample_idx];
+    ++sample_idx;
+  }
+  
+  if (d_num_samples != sample_idx) {
+    LOG(QGS::Log::WARNING) << "Read " << sample_idx << " individuals, expected " << d_num_samples << ": skipping locus\n";
+    return false;
+  }
+   
+  l.maf = ds_sum / (d_num_samples * 2.0);
+  if (l.maf > 0.5) {
+    LOG(QGS::Log::TRACE) << "Flipped MAF (" << l.maf << ") for " << l << '\n';
+    l.maf = 1 - l.maf;
+  }
+  
+  return true;
+  
 }
 

@@ -19,6 +19,7 @@ class VCFreader : public SNPreader {
   private:
     bool read_gt(Locus &);
     bool read_ds(Locus &);
+    bool read_plink(Locus &);
 };
 
 #endif

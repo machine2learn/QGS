@@ -1,7 +1,7 @@
 #ifndef INCL_COMMAND_LINE_ARGUMENTS_H
 #define INCL_COMMAND_LINE_ARGUMENTS_H
 
-#define QGS_VERSION "1.3 rs-out"
+#define QGS_VERSION "1.4 plink-workaround"
 
 #include <unordered_map>
 #include <vector>
