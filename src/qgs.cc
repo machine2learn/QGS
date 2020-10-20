@@ -73,17 +73,23 @@ int main(int argc, char ** argv) {
     out_file << delimiter << sample_file->sample_id(sidx);
   out_file << '\n';
   
+  if (!out_file) {
+    LOG(QGS::Log::FATAL) << "Failed to write to `" 
+      << fname_out << "`.\n";
+    return 1;
+  }
+  
   // Keep some statistics about how many variants are used for what
   struct Snp_counts {
     std::size_t read = 0,
-                outside_blocks = 0,
-                inside_blocks = 0,
-                overlapping = 0,
-                non_overlapping = 0,
-                skipped = 0,
-                filled_missing = 0,
-                used = 0;
-  } total_counts, sample_counts, ref_counts;
+      outside_blocks = 0,
+      inside_blocks = 0,
+      overlapping = 0,
+      non_overlapping = 0,
+      skipped = 0,
+      filled_missing = 0,
+      used = 0;
+  } sample_counts, ref_counts;
   
   
   // ##### MAIN READ BLOCK
@@ -374,19 +380,26 @@ int main(int argc, char ** argv) {
       else
         out_file << delimiter << (score + addition_factor * reference_file->num_samples()) / (correction_factor * reference_file->num_samples() + addition_factor * reference_file->num_samples());
     }
-    out_file << '\n';
-
+    if (!(out_file << '\n')) { // final write of this QGS score, check for success
+      LOG(QGS::Log::FATAL) << "Failed to write to `" 
+        << fname_out << "`.\n";
+      return 1;
+    }
   }
   
+  // output some statistics
+
+  sample_counts.overlapping += ref_counts.overlapping;
+  
   std::cout << std::setprecision(3);
-  std::cout << "Sample statistics:\n" 
-    << "  Read: " << sample_counts.read << "\n"
-    << "  Used: " << sample_counts.used << " (" 
-    << (sample_counts.used * 100.0) / sample_counts.read << "%)\n"
-    << "  Overlapping: " << sample_counts.overlapping << " (" 
+  LOG(QGS::Log::INFO) << "Sample statistics:\n" 
+    << "  Loci read: " << sample_counts.read << "\n"
+    << "  Loci used: " << sample_counts.used << " (" 
+    << (sample_counts.used * 100.0) / sample_counts.read << "%)\n";
+
+  LOG(QGS::Log::VERBOSE)
+    << "Overlapping: " << sample_counts.overlapping << " (" 
     << (sample_counts.overlapping * 100.0) / sample_counts.read << "%)\n"
-//    << "  Non-overlapping: " << sample_counts.non_overlapping << " (" 
-//    << (sample_counts.non_overlapping * 100.0) / sample_counts.read << "%)\n"
     << "  Skipped: " << sample_counts.skipped << " (" 
     << (sample_counts.skipped * 100.0) / sample_counts.read << "%)\n"
     << "  Inside regions: " << sample_counts.inside_blocks << " (" 
@@ -395,21 +408,6 @@ int main(int argc, char ** argv) {
     << (sample_counts.outside_blocks * 100.0) / sample_counts.read << "%)\n"
     << "  With missings: " << sample_counts.filled_missing << " (" 
     << (sample_counts.filled_missing * 100.0) / sample_counts.read << "%)\n\n";
-    
-  std::cout << "Reference statistics:\n" 
-    << "  Read: " << ref_counts.read << "\n"
-    << "  Used: " << sample_counts.used << " (" 
-    << (ref_counts.used * 100.0) / ref_counts.read << "%)\n"
-    << "  Overlapping: " << ref_counts.overlapping << " (" 
-    << (ref_counts.overlapping * 100.0) / ref_counts.read << "%)\n"
-//    << "  Non-overlapping: " << ref_counts.non_overlapping << " (" 
-//    << (ref_counts.non_overlapping * 100.0) / ref_counts.read << "%)\n"
-    << "  Skipped: " << ref_counts.skipped << " (" 
-    << (ref_counts.skipped * 100.0) / ref_counts.read << "%)\n"
-    << "  Inside regions: " << ref_counts.inside_blocks << " (" 
-    << (ref_counts.inside_blocks * 100.0) / ref_counts.read << "%)\n"
-    << "  Outside regions: " << ref_counts.outside_blocks << " (" 
-    << (ref_counts.outside_blocks * 100.0) / ref_counts.read << "%)\n\n";
 
   std::cout << "Run completed\n";
 }
