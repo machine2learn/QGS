@@ -5,7 +5,6 @@ int main(int argc, char ** argv) {
   std::cout << "QGS " << QGS_VERSION << "\n\n";
   
   // ##### SET COMMAND LINE CONSTANTS
-  
   std::unordered_map<std::string, std::vector<std::string>> const args = QGS::command_line_arguments(argc, argv);
   
   // required arguments
@@ -27,23 +26,22 @@ int main(int argc, char ** argv) {
   long long const chr_filter = args.find("chr") != args.end() ? std::stoll(args.find("chr")->second.at(0)) : 0;
 
   // optional arguments
-   bool const hard_calls = args.find("hard-calls") != args.end();
-   bool const fill_missings = args.find("fill-missings") != args.end();
-   bool const allow_missings = fill_missings || args.find("allow-missings") != args.end();
-   char const delimiter = args.find("delimiter") == args.end() ? ',' : args.find("delimiter")->second.at(0)[0];
-   bool const output_variants = args.find("output-variants") != args.end();
-   
-   bool const weighted_calculation = args.find("weight-by") != args.end();
-   std::string const weight_info_field = weighted_calculation ? args.find("weight-by")->second.at(0) : std::string();
+  bool const hard_calls = args.find("hard-calls") != args.end();
+  bool const fill_missings = args.find("fill-missings") != args.end();
+  bool const allow_missings = fill_missings || args.find("allow-missings") != args.end();
+  char const delimiter = args.find("delimiter") == args.end() ? ',' : args.find("delimiter")->second.at(0)[0];
+  bool const output_variants = args.find("output-variants") != args.end();
 
+  bool const weighted_calculation = args.find("weight-by") != args.end();
+  std::string const weight_info_field = weighted_calculation ? args.find("weight-by")->second.at(0) : std::string();
 
-   // verbosity
-   if (args.find("trace") != args.end())
-     LOGLVL(QGS::Log::TRACE);
-   else if (args.find("debug") != args.end())
-     LOGLVL(QGS::Log::DEBUG);
-   else if (args.find("verbose") != args.end())
-     LOGLVL(QGS::Log::VERBOSE);
+  // verbosity
+  if (args.find("trace") != args.end())
+   LOGLVL(QGS::Log::TRACE);
+  else if (args.find("debug") != args.end())
+   LOGLVL(QGS::Log::DEBUG);
+  else if (args.find("verbose") != args.end())
+   LOGLVL(QGS::Log::VERBOSE);
 
   // ##### OPEN INPUT AND OUTPUT FILES
   
@@ -85,7 +83,7 @@ int main(int argc, char ** argv) {
                 skipped = 0,
                 filled_missing = 0,
                 used = 0;
-  } sample_counts, ref_counts;
+  } total_counts, sample_counts, ref_counts;
   
   
   // ##### MAIN READ BLOCK
