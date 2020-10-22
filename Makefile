@@ -1,6 +1,6 @@
 ### CONFIGURE - EDIT TO PREFERENCE
 
-# Compiler, flags and include directories (-I)
+# 1Compiler, flags and include directories (-I)
 CC    := g++
 CCFL  := -Wall -Werror -pedantic -std=c++11 -O3 
 INC   := lib/boost_1_67_0
