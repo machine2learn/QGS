@@ -20,6 +20,7 @@ pheno = np.linspace(0, 1, nsubjects)
 
 # Loop over every row/gene
 for gene_idx in qgs_values.index:
+
   # Extract the QGS values for this gene
   qgs_row = qgs_values.loc[gene_idx][9:].to_numpy().astype(float)
 
@@ -32,4 +33,3 @@ for gene_idx in qgs_values.index:
     beta, # coefficient/beta
     p_value # p value
   ))
-
