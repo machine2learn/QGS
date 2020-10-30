@@ -191,18 +191,23 @@ std::unordered_map<std::string, std::string> create_gtf_filter(std::unordered_ma
 void read_snp_file(std::string const & fname, std::unordered_map<std::string, bool> & out, bool value) {
   GZfile file(fname);
   if (!file)
-    LOG(QGS::Log::WARNING) << "Cannot open file `" << fname << "`. No loci read.";
+    LOG(QGS::Log::WARNING) << "Cannot open file `" << fname << "`. No loci read.\n";
   std::string loc;
   while (file.handle() >> loc)
     out[std::move(loc)] = value;
   if (out.empty())
-    LOG(QGS::Log::WARNING) << "No loci read from file `" << fname << "`.";
-  LOG(QGS::Log::VERBOSE) << "Read " << out.size() << " loci from `" << fname << "`.";
+    LOG(QGS::Log::WARNING) << "No loci read from file `" << fname << "`.\n";
+  LOG(QGS::Log::VERBOSE) << "Read " << out.size() << " loci from `" << fname << "`.\n";
 }
 
 std::unordered_map<std::string, bool> create_snp_filter(std::unordered_map<std::string, std::vector<std::string>> const & args) {
   std::unordered_map<std::string, bool> out;
   
+  if (args.find("include-snps") != args.end() && args.find("exclude-snps") != args.end()) {
+    LOG(QGS::Log::WARNING) << "Both --include-snps and --exclude-snps have been set. "
+      << "This is not possible. --exclude-snps will be ignored.\n";
+  }
+
   std::unordered_map<std::string, std::vector<std::string>>::const_iterator itt;
   if ((itt = args.find("include-snps")) != args.end())
     read_snp_file(itt->second[0], out, true);
