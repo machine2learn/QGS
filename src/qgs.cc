@@ -276,7 +276,7 @@ int main(int argc, char ** argv) {
         for (auto & dosage : sample_locus.data_ds)
           if (std::isnan(dosage)) {
             ++miss_cnt;
-            dosage = 0;
+            dosage = sample_locus.switch_ar ? 2 : 0;
           }
         if (miss_cnt) {
           ++sample_counts.filled_missing;
