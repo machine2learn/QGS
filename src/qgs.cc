@@ -274,7 +274,7 @@ int main(int argc, char ** argv) {
       if (fill_missings) {
         std::size_t miss_cnt = 0;
         for (auto & dosage : sample_locus.data_ds)
-          if (dosage < 0) {
+          if (std::isnan(dosage)) {
             ++miss_cnt;
             dosage = 0;
           }

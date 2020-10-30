@@ -3,6 +3,7 @@
 #include <ostream>
 #include <iostream>
 #include <numeric>
+#include <cmath>
 #include "log.h"
 
 
@@ -132,7 +133,7 @@ bool Plinkbedreader::deep_read(SNPreader::Locus & l) {
       char const val = (mask & byte) >> (offset * 2);
       switch (val) {
         case 0x00: l.data_ds[sample_idx] = dosages[0]; total_dosage += dosages[0]; break;
-        case 0x01: l.data_ds[sample_idx] = -999; if (!d_allow_missings) return false; break;
+        case 0x01: l.data_ds[sample_idx] = NAN; if (!d_allow_missings) return false; break; // missing
         case 0x02: l.data_ds[sample_idx] = dosages[1]; total_dosage += dosages[1]; break;
         case 0x03: l.data_ds[sample_idx] = dosages[2]; total_dosage += dosages[2]; break;
         default:
