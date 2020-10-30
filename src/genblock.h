@@ -96,6 +96,18 @@ inline std::istream & operator>>(std::istream & in, Genblock & g) {
        val.substr(1, val.length() - 3)
      :
        val;
+  
+  // set a default name in case none is provided
+  if (g.attr.find("gene_name") == g.attr.end()) {
+    g.attr["gene_name"] = std::to_string(g.chr) + ":" + 
+      std::to_string(g.start) + "-" +
+      std::to_string(g.stop);
+  }
+
+  // set a default id in case none is provided
+  if (g.attr.find("gene_id") == g.attr.end()) {
+    g.attr["gene_id"] = g.attr["gene_name"];
+  }
 
   return in;
 }
