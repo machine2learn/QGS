@@ -84,7 +84,7 @@ inline std::istream & operator>>(std::istream & in, Genblock & g) {
   }
   
   g.attr["chr"] = chr;
-  g.attr["source"] = g.type;
+  g.attr["source"] = g.source;
   g.attr["type"] = g.type;
 
   std::string key, val;
