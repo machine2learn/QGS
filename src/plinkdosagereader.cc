@@ -49,7 +49,7 @@ Plinkdosagereader::Plinkdosagereader(std::vector<std::string> const & files)
   d_filenr = -1;
   if (!open_next()) {
     LOG(QGS::Log::FATAL) << "Cannot open input files: empty list."
-      << "Aborting.";
+      << "Aborting.\n";
     std::exit(EXIT_FAILURE);
   }
 }
@@ -58,7 +58,7 @@ std::string Plinkdosagereader::find_map_file() const {
   
   std::string fbase = d_fname;
 
-  LOG(QGS::Log::TRACE) << "Attempting to find plink map file...";
+  LOG(QGS::Log::TRACE) << "Attempting to find plink map file...\n";
   
   std::vector<std::string> files = {fbase + ".map", fbase + ".map.gz"};
   
@@ -73,15 +73,15 @@ std::string Plinkdosagereader::find_map_file() const {
 
   // attempting to find map file
   for (auto const & file : files) {
-    LOG(QGS::Log::VERBOSE) << "Probe map file `" << file  << "`.";
+    LOG(QGS::Log::VERBOSE) << "Probe map file `" << file  << "`.\n";
     std::ifstream tmp(file);
     if (tmp) {
-      LOG(QGS::Log::VERBOSE) << "Map file found.";
+      LOG(QGS::Log::VERBOSE) << "Map file found.\n";
       return file;
     }
   }
   
-  LOG(QGS::Log::VERBOSE) << "Map file not found.";
+  LOG(QGS::Log::VERBOSE) << "Map file not found.\n";
   return "";
 
 }
@@ -109,7 +109,7 @@ bool Plinkdosagereader::deep_read(SNPreader::Locus & l) {
   if (d_max <= 1 && max > 1) {
     LOG(QGS::Log::FATAL) << "Reading locus " << l.id << 
        " we discovered our intial guess of 0-1 dosages was incorrect. "
-      "Please discard current results and rerun with dosage specified.";
+      "Please discard current results and rerun with dosage specified.\n";
     std::exit(EXIT_FAILURE);
   }
     
@@ -138,7 +138,7 @@ bool Plinkdosagereader::deep_read(SNPreader::Locus & l) {
   if (d_max > 1) {
     LOG(QGS::Log::FATAL) << "Dosage file `" << d_fname << 
        "` contains probabilities but has value " << d_max <<
-       " > 1 on line " << d_linenr << ". Aborting run.";
+       " > 1 on line " << d_linenr << ". Aborting run.\n";
     std::exit(EXIT_FAILURE);
   }
   
@@ -154,7 +154,7 @@ bool Plinkdosagereader::deep_read(SNPreader::Locus & l) {
         LOG(QGS::Log::FATAL) << "Dosage file `" << d_fname << 
            "` contains probabilities " << data[idx] << " + " <<
            data[idx+1] << " > 1 on line " << d_linenr <<
-           " > 1. Aborting run (1).";
+           " > 1. Aborting run (1).\n";
         std::exit(EXIT_FAILURE);
       }
       if (l.switch_ar) { // SWITCH
@@ -166,14 +166,14 @@ bool Plinkdosagereader::deep_read(SNPreader::Locus & l) {
         LOG(QGS::Log::FATAL) << "Dosage file `" << d_fname << 
            "` contains probabilities " << data[idx] << " + " <<
            data[idx+1] << " > 1 on line " << d_linenr <<
-           " > 1. Aborting run (2).";
+           " > 1. Aborting run (2).\n";
         std::exit(EXIT_FAILURE);
       }
       l.data_ds.push_back(val);
     }
     
     if (l.data_ds.size() != d_num_samples) {
-      LOG(QGS::Log::FATAL) << "Didn't read enough dosages.";
+      LOG(QGS::Log::FATAL) << "Didn't read enough dosages.\n";
       std::exit(EXIT_FAILURE);
     }
     
@@ -246,7 +246,7 @@ bool Plinkdosagereader::parse_header() {
     if (!(iss >> iid)) {
       LOG(QGS::Log::WARNING) << "Found sample fid without iid in "
         "file `" << d_fname << "` on line 1. fid=" << fid << 
-        ": ignoring individual.";
+        ": ignoring individual.\n";
       break;
     }
     sample.push_back(fid + "_" + iid);
@@ -271,7 +271,7 @@ bool Plinkdosagereader::parse_header() {
 
   LOG(QGS::Log::VERBOSE) << "Opened file `" << d_fname << ". "
                              "Read mode: plink dosage. "
-                             "Found " << d_num_samples << " subjects.";
+                             "Found " << d_num_samples << " subjects.\n";
                              
   return true;
 }
@@ -288,11 +288,11 @@ void Plinkdosagereader::parse_line(SNPreader::Locus & l) {
   std::string line;
   if (!std::getline(d_map_file.handle(), line)) {
     if (d_map_file.handle().eof()) { // we've reached EOF
-      LOG(QGS::Log::TRACE) << "Map EOF: opening next";
+      LOG(QGS::Log::TRACE) << "Map EOF: opening next\n";
       if (open_next())
         return parse_line(l);
     }
-    LOG(QGS::Log::TRACE) << "Can't read line from map file.";
+    LOG(QGS::Log::TRACE) << "Can't read line from map file.\n";
     d_file.handle().setstate(std::ios_base::failbit);
     return;
   }
@@ -303,7 +303,7 @@ void Plinkdosagereader::parse_line(SNPreader::Locus & l) {
   auto old_locus = l;
   
   if (!(mapline >> l.chr >> l.id >> l.info_str >> l.pos)) {
-    LOG(QGS::Log::TRACE) << "Can't parse line from map file.";
+    LOG(QGS::Log::TRACE) << "Can't parse line from map file.\n";
     d_file.handle().setstate(std::ios_base::failbit);
     return;
   }
@@ -319,11 +319,11 @@ void Plinkdosagereader::parse_line(SNPreader::Locus & l) {
   std::string tmp;
   if (mapline >> tmp) {
     LOG(QGS::Log::WARNING) << "Unexpected data in map file `" 
-      << d_map_fname << "`. Value=" << tmp << ". Ignoring.";
+      << d_map_fname << "`. Value=" << tmp << ". Ignoring.\n";
   }
   
   if (!std::getline(d_file.handle(), line)) {
-    LOG(QGS::Log::TRACE) << "Can't read line from dosage file.";
+    LOG(QGS::Log::TRACE) << "Can't read line from dosage file.\n";
     return;
   }
   
@@ -336,7 +336,7 @@ void Plinkdosagereader::parse_line(SNPreader::Locus & l) {
   
   std::string id;
   if (!(d_buffer >> id >> l.ref >> l.alt)) {
-    LOG(QGS::Log::TRACE) << "Can't parse line from dosage file.";
+    LOG(QGS::Log::TRACE) << "Can't parse line from dosage file.\n";
     d_file.handle().setstate(std::ios_base::failbit);
     return;
   }
@@ -344,7 +344,7 @@ void Plinkdosagereader::parse_line(SNPreader::Locus & l) {
   if (id != l.id) {
     LOG(QGS::Log::WARNING) << "Dosage and map file out of sync on "
       "map line " << d_linenr << ": read snps " << id << " (dosage) "
-      "and " << l.id << " (map). Stopping read.";
+      "and " << l.id << " (map). Stopping read.\n";
     l.chr = 0;
     l.pos = 0;
   }
@@ -382,7 +382,7 @@ bool Plinkdosagereader::open_next()
   if (!parse_header()) {
     // assuming this file is empty
     LOG(QGS::Log::WARNING) << "Input file `" << d_fname 
-      << "` does not have proper header: skipping file.";
+      << "` does not have proper header: skipping file.\n";
     return open_next();
   }
   
