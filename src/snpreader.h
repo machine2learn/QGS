@@ -21,7 +21,7 @@ class SNPreader {
     std::unordered_map<std::string, std::string> pinfo;
     double maf = 0;
     std::vector<float> data_ds;
-    bool switch_ar = false;
+    bool switch_ar = false; // indicates alt/ref switch with reference panel
 
     void clear() {
       maf = 0;
