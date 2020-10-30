@@ -41,6 +41,8 @@ inline std::ostream & operator<<(std::ostream & out, Genblock const & g) {
 
 inline std::istream & operator>>(std::istream & in, Genblock & g) {
   
+  g = {};
+  
   std::string line;
   if (!std::getline(in, line)) {
     return in;
