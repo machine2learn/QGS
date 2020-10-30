@@ -37,11 +37,11 @@ inline std::unique_ptr<SNPreader> open_genetics_file(std::vector<std::string> co
   }
 
   if (boost::algorithm::ends_with(files.at(0), ".bed") || boost::algorithm::ends_with(files.at(0), ".bed.gz")) {
-    LOG(QGS::Log::VERBOSE) << "Assuming sample input file is PLINK BED format.\n";
+    LOG(QGS::Log::VERBOSE) << "Assuming `" << files.at(0) << "` input file is PLINK BED format.\n";
     return std::unique_ptr<SNPreader>{std::unique_ptr<Plinkbedreader>(new Plinkbedreader(files.at(0), allow_missings))};
   }
   
-  LOG(QGS::Log::VERBOSE) << "Assuming sample input file is VCF format (default).\n";
+  LOG(QGS::Log::VERBOSE) << "Assuming `" << files.at(0) << "` input file is VCF format (default).\n";
   return std::unique_ptr<SNPreader>{std::unique_ptr<VCFreader>(new VCFreader(files.at(0), hard_calls, allow_missings))};
 }
 
