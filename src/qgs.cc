@@ -196,7 +196,7 @@ int main(int argc, char ** argv) {
         LOG(QGS::Log::TRACE) << "Filter: Sample locus passed filter. Including.\n";
       }
         
-      if (sample_locus.chr != gb.chr || sample_locus.pos < gb.start || sample_locus.pos > gb.stop) {
+      if (sample_locus.chr != gb.chr || sample_locus.pos < gb.start) {
         LOG(QGS::Log::TRACE) << "Match: locus " 
           << sample_locus.chr << ":" << sample_locus.pos 
           << " does not lie within block. skipping.\n";
