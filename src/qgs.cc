@@ -106,11 +106,25 @@ int main(int argc, char ** argv) {
   
   std::map<std::size_t, std::map<std::size_t, std::map<std::string, Scores>>> scores;
 
-  while (*sample_file && *reference_file) {
+  for (;;) {
+    
+    if (!(*sample_file && *reference_file)) {
+      std::size_t num_snps_in_mem = 0;
+      for (auto const & map_chr : scores)
+        num_snps_in_mem += map_chr.second.size();
+      LOG(QGS::Log::TRACE) << "No more genetic data left to read. "
+        << num_snps_in_mem << " loci still in memory.\n";
+      if (scores.empty() || gb.chr != reference_locus.chr || gb.start > reference_locus.pos) {
+        LOG(QGS::Log::TRACE) << "Genetic region starts after last read. Stopping.\n";
+        break;
+      }
+    }
 
     if (!(gene_file >> gb)) {
-      if (gene_file.handle().eof())
+      if (gene_file.handle().eof()) {
+        LOG(QGS::Log::TRACE) << "No more genetic regions left to read. Stopping.\n";
         break;
+      }
       gene_file.handle().clear();
       LOG(QGS::Log::TRACE) << "Failed to read line from gene file. Skipping.\n";
       continue;
@@ -139,6 +153,9 @@ int main(int argc, char ** argv) {
     }
     
     for (;;) {
+      
+      if (!(*sample_file && *reference_file))
+        break;
       
       Snp_counts & data_counts = (!reference_locus.chr || reference_locus <= sample_locus) ? ref_counts : sample_counts;
       
