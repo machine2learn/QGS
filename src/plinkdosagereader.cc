@@ -12,7 +12,6 @@ Plinkdosagereader::Plinkdosagereader(std::string const & fname)
   SNPreader(fname),
   d_map_fname{find_map_file()},
   d_map_file(d_map_fname),
-  d_force_hardcalls{false},
   d_linenr{0},
   d_filenr{0},
   d_max{-1}
@@ -38,7 +37,6 @@ Plinkdosagereader::Plinkdosagereader(std::vector<std::string> const & files)
   SNPreader(""),
   d_fnames(files),
   d_map_file(""),
-  d_force_hardcalls{false},
   d_linenr{0},
   d_filenr{0},
   d_max{-1}

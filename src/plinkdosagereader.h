@@ -11,7 +11,7 @@ class Plinkdosagereader : public SNPreader {
     std::string d_map_fname;
     std::vector<std::string> d_fnames;
     GZfile d_map_file;
-    bool d_force_hardcalls;
+    //bool d_force_hardcalls; always read dosages
     std::size_t d_linenr, d_filenr;
     float d_max;
 
