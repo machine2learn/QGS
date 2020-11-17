@@ -1,5 +1,5 @@
 #ifndef INCL_QGS_CMD_LINE_OPTIONS_H
-#define INCL_CMD_LINE_OPTIONS_H
+#define INCL_QGS_CMD_LINE_OPTIONS_H
 
 #include "log.h"
 
