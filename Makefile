@@ -2,7 +2,7 @@
 
 # Compiler, flags and include directories (-I)
 CC    := g++
-CCFL  := -Wall -Werror -pedantic -std=c++11 -O3 
+CCFL  := -Wall -Werror -pedantic -std=c++11 -O3
 INC   := lib/boost_1_67_0
 
 # Linker, flags and external libraries (-l) 
