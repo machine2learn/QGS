@@ -248,3 +248,16 @@ This results in
     Run completed
 
 For a full overview of possible arguments, see the section **Command line arguments** above.
+
+# Funding
+
+This project has received funding from the European Union’s Seventh
+Framework Programme for research, technological development and
+demonstration under grant agreement no 602805 - AGGRESSOTYPE.
+This paper reflects only the author’s views and the European Union is
+not liable for any use that may be made of the information contained
+therein. This work is part of the research programme Computing Time
+National Computing Facilities Processing Round pilots 2018 with project
+number 17666, which is (partly) financed by the Dutch Research Council
+(NWO). This work was partially carried out on the Dutch national e-
+infrastructure with the support of SURF Cooperative.
