@@ -1,3 +1,9 @@
+/*
+  GNU General Public License v3 (GPLv3)
+  Copyright (c) 2016-2020 Gido Schoenmacker
+  Complete License at https://github.com/machine2learn/QGS/blob/master/LICENSE.md
+*/
+
 #include "command_line_arguments.h"
 #include "gzfile.h"
 #include <iostream>

@@ -1,8 +1,20 @@
+/*
+  GNU General Public License v3 (GPLv3)
+  Copyright (c) 2016-2020 Gido Schoenmacker
+  Complete License at https://github.com/machine2learn/QGS/blob/master/LICENSE.md
+*/
+
 #include "qgs.h"
 
 int main(int argc, char ** argv) {
   
-  std::cout << "QGS " << QGS_VERSION << "\n\n";
+
+  // GPL COPYRIGHT NOTICE
+  
+  std::cout << "QGS " << QGS_VERSION << " (C) 2020 Gido Schoenmacker.\n"
+    "This program comes with ABSOLUTELY NO WARRANTY.\n"
+    "This is free software and you are welcome to redistribute it "
+    "under GPLv3 conditions.\n\n";
   
   // ##### SET COMMAND LINE CONSTANTS
   std::unordered_map<std::string, std::vector<std::string>> const args = QGS::command_line_arguments(argc, argv);
