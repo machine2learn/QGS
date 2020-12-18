@@ -139,7 +139,7 @@ This tutorial assumes that you have a Linux command line (bash) environment.
 
 First, we will download and compile the QGS program:
 
-    git clone https://bitbucket.org/GS42/qgs.git
+    git clone https://github.com/machine2learn/QGS.git
     cd qgs
     make
     ./qgs --version
