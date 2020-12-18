@@ -8,10 +8,13 @@ from qgs import qgs, write_vcf, fltcmp
 
 
 # Sample matrix
-S = np.array([0.2, 1.2]);
+S = np.array([[0.2], [1.2]]);
 
 # Reference matrix
-R = np.array([[0.5, 0.8], [1.1, 0.1], [1.4, 0.3]])
+R = np.array([[0.5, 1.1, 1.4], [0.8, 0.1, 0.3]])
+
+# Calculate expected QGS
+qgs_exp = qgs(S, R)
 
 # Write vcf files
 write_vcf("sample.vcf", S)
@@ -22,10 +25,10 @@ os.system("../../qgs --sample sample.vcf --reference reference.vcf --genes ../te
 
 # Read QGS output file
 qgs_values = pd.read_csv("test.csv", header=0)
-qgs_value = qgs_values.SubID0[0]
+qgs_value = qgs_values.SubID0
 
 # Test
-if fltcmp(qgs(S, R), qgs_value) == 0:
+if np.sum(np.abs(np.subtract(qgs_exp, qgs_value))) < 0.000001:
   print("Test passed.")
   sys.exit(0)
 

@@ -7,7 +7,7 @@ def fltcmp(lhs, rhs):
     lhs (float)
     rhs (float)
   
-  Both arguments expect subjects in rows and variants in columns
+  Both arguments expect variants in rows and samples in columns
 
   Returns:
     int: 0 if equal; -1 if lhs < rhs; +1 otherwise
@@ -27,14 +27,14 @@ def qgs_single(s, R):
     s (numpy.array): Vector containing single sample dosages
     R (numpy.array): Vector or matrix containing reference dosages
   
-  Both arguments expect subjects in rows and variants in columns
+  Both arguments expect variants in rows and samples in columns
 
   Returns:
     float: The QGS sum score of the inputs for one individual
 
   """
 
-  return np.sum(np.abs(np.subtract(s, R))) / (2 * np.product(np.shape(R)))
+  return np.sum(np.abs(np.subtract(s, R.T))) / (2 * np.product(np.shape(R)))
 
 
 def qgs(S, R):
@@ -44,17 +44,22 @@ def qgs(S, R):
     S (numpy.array): Vector or matrix containing sample dosages
     R (numpy.array): Vector or matrix containing reference dosages
   
-  Both arguments expect subjects in rows and variants in columns
+  Both arguments expect variants in rows and samples in columns
 
   Returns:
     np.array of float: The QGS sum score for all samples
 
   """
+
+  d = S.shape[0] # number of variants
+  n = S.shape[1] # number of samples
+  print("Sample: %d indiv. with %d variants" % (n, d))
+
+  d = R.shape[0] # number of variants
+  n = R.shape[1] # number of samples
+  print("Ref: %d indiv. with %d variants" % (n, d))
   
-  if np.ndim(S) == 1:
-    return qgs_single(S, R)
-  
-  return np.apply_along_axis(qgs_single, axis=1, arr=S, R=R)
+  return np.apply_along_axis(qgs_single, axis=0, arr=S, R=R)
   
 def write_vcf(filename, D, startpos = 1):
   """Write simple VCF file
@@ -81,25 +86,18 @@ def write_vcf(filename, D, startpos = 1):
   f = open(filename, "w")
   f.write(out)
   
-  n = len(D) # number of samples
-  if D.ndim == 1:
-    n = 1
-  
-  d = len(D) # number of variants
-  if D.ndim > 1:
-    d = D.shape[1]
+  d = D.shape[0] # number of variants
+  n = D.shape[1] # number of samples
+    
   
   for i in range(n):
     f.write("	SubID%s" % (i))
   
   f.write("\n")
   
-  for idx, col in enumerate(D.T):
+  for idx, row in enumerate(D):
     f.write("1\t%d\t1:%d\tA\tG\t100\tPASS\tVT=SNP\tDS\t" % (startpos + idx, startpos + idx))
-    if n == 1:
-      f.write(str(col))
-    else:
-      f.write('\t'.join([str(ds) for ds in col]))
+    f.write('\t'.join([str(ds) for ds in row]))
     f.write("\n")
 
   f.close()
