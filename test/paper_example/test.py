@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import os
 import sys
-from qgs import qgs, write_vcf, fltcmp
+from ..qgs import qgs, write_vcf, fltcmp
 
 
 # Sample matrix
