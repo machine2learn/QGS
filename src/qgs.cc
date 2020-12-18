@@ -11,7 +11,7 @@ int main(int argc, char ** argv) {
 
   // GPL COPYRIGHT NOTICE
   
-  std::cout << "QGS " << QGS_VERSION << " (C) 2020 Gido Schoenmacker.\n"
+  std::cout << "QGS " << QGS_VERSION << " (C) Gido Schoenmacker.\n"
     "This program comes with ABSOLUTELY NO WARRANTY.\n"
     "This is free software and you are welcome to redistribute it "
     "under GPLv3 conditions.\n\n";
