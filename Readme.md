@@ -34,7 +34,7 @@ Option|Description|Example
 --sample [path]|Path to sample input file in VCF or Plink format. May be gz-compressed. For Plink, only binary bed/bim/fam files are supported. All three files must be present in the same directory. The path given to --sample must be that of the .bed file, e.g. `--sample plinkfile.bed`. The other two files (bim/fam) will be found automatically.| `--sample samplefile.vcf.gz`
 --reference [path]|Path to reference input file in VCF or Plink format. See `--sample` for details. For best results, make sure the reference panel matches the sample population by geographical region. If the sample file is imputed, the imputation reference panel is a good choice. The sample file itself can also be used as a reference.| `--reference referencefile.vcf.gz`
 --genes [path]|Path to gene location annotation in Gene Transfer Format. my be gz-compressed. We recommend using the Gencode releases.| `--genes gencode.basic.annotation.gtf.gz`
---out [path]|filename for writeable output file. any existing file will be overwritten without warning.|`--out outputfile.csv`
+--out [path]|filename for writable output file. any existing file will be overwritten without warning.|`--out outputfile.csv`
 
 **Make sure that the sample file, the reference file, and the gene locations share the same mapping/build** (e.g. Grch38/hg38 or b37/hg19). Mismatches between the sample and reference will likely be detected, but mismatches between the genotypes and the gene annotation cannot be detected.
 
@@ -54,7 +54,7 @@ Flag|Description|Example
 ------|-----|------
 --chr [value]|Only calculate QGS for listed chromosome. Value must be numeric. X = 23, Y = 24, MT = 25.|`--chr 22`
 --maf [value]|Minor allele frequency threshold. Any variants with a lower observed MAF in either sample or reference will be excluded. Default value: 0.01|--maf 0.05
---gtf-filter [key]=[value] [[key2=value2]]|Key-value pairs for only including specific genes/transcripts or types. Multiple key-value pairs can be provided. Including the option `type=gene` is recommended to exclude transcripts, exons, etc. The `type=` argument filters specifically based on column #3 in the GTF file. Other filter options are based on column #9 from the GTF file and can take any key/value combinarion, e.g. `gene_type=protein_coding` (excludes non-protein-coding genes) or `gene_name=BRK1` (only calcuate QGS for BRK1 gene).|`--gtf-filter type=gene gene_type=protein_coding`
+--gtf-filter [key]=[value] [[key2=value2]]|Key-value pairs for only including specific genes/transcripts or types. Multiple key-value pairs can be provided. Including the option `type=gene` is recommended to exclude transcripts, exons, etc. The `type=` argument filters specifically based on column #3 in the GTF file. Other filter options are based on column #9 from the GTF file and can take any key/value combination, e.g. `gene_type=protein_coding` (excludes non-protein-coding genes) or `gene_name=BRK1` (only calculate QGS for BRK1 gene).|`--gtf-filter type=gene gene_type=protein_coding`
 --include-snps [path]|Path to a file containing variant names to include. Other variants will be excluded. Variant-names can be rs-numbers (if those are provided in the genetic input files) or chr:location. Variants must be separated by white space, e.g. one on every line. Cannot be combined with `--exclude-snps`| `--include-snps list_of_snps.txt`
 --exclude-snps [path]|Path to a file containing variant names to exclude. Variant-names can be rs-numbers (if those are provided in the genetic input files) or chr:location. Variants must be separated by white space, e.g. one on every line. Cannot be combined with `--include-snps`| `--exclude-snps list_of_snps.txt`
 
@@ -64,7 +64,7 @@ Flag|Description|Example
 ------|-----|------
 --verbose|Increase the information that QGS prints to the screen. Extra information includes number of individuals read and which scores were outputted.|`--verbose`
 --debug|Increase the information that QGS prints to the screen even more. Extra information includes every successful read of a variant and which variants are includes and excluded for every score .|`--debug`
---trace|Print every descision that QGS makes. This will print **a lot** of output to the screen and significantly slow down the program. Only use this option if you need to find out *why* QGS is making some descision and `--debug` is not telling you enough.|`--trace`
+--trace|Print every decision that QGS makes. This will print **a lot** of output to the screen and significantly slow down the program. Only use this option if you need to find out *why* QGS is making some decision and `--debug` is not telling you enough.|`--trace`
 
 If multiple verbosity options are provided, QGS will use the most verbose flag provided.
 
@@ -75,8 +75,8 @@ By default, no flanking regions are included.
 Flag|Description|Example
 ------|-----|------
 --flank [value]|Symmetrical flanking region to be included for every QGS region. Value should be a positive whole number representing the flanking region in kb. Default value: 0.|`--flank 5`
---pre-flank [value]|Asymmetrial flanking region. Specifies the number of kb to be included in front of every QGS region. Regions with reverse strand orientation are handled automatically, provided the information is available in the GTK file. If both `--flank` and `--pre-flank` are provided, `--pre-flank` takes priotiry.|`--pre-flank 15`
---post-flank [value]|Asymmetrial flanking region. Specifies the number of kb to be included after every QGS region. Regions with reverse strand orientation are handled automatically, provided the information is available in the GTK file. If both `--flank` and `--post-flank` are provided, `--post-flank` takes priotiry.|`--post-flank 35`
+--pre-flank [value]|Asymmetrical flanking region. Specifies the number of kb to be included in front of every QGS region. Regions with reverse strand orientation are handled automatically, provided the information is available in the GTK file. If both `--flank` and `--pre-flank` are provided, `--pre-flank` takes priority.|`--pre-flank 15`
+--post-flank [value]|Asymmetrical flanking region. Specifies the number of kb to be included after every QGS region. Regions with reverse strand orientation are handled automatically, provided the information is available in the GTK file. If both `--flank` and `--post-flank` are provided, `--post-flank` takes priority.|`--post-flank 35`
 
 ###### Missing data
 
@@ -202,7 +202,7 @@ The script must be provided with the location of the "out.csv" file as seen abov
     POTEH	0.64	1.062172e-02
     CCT8L2	0.05	4.425209e-01
     
-We can check what the top 5 most significantly associated genes are by sorting by the third column:
+We can check what the top 5 most significantly associated genes are by sorting by the third column (assuming a Linux Bash-like command line):
 
     python3 gwas.py ../out.csv | sort -gk3 | head -5
     Rscript gwas.r ../out.csv | sort -gk3 | head -5
@@ -215,7 +215,7 @@ The output should be something like
     ZBED4	0.94	8.238983e-20
     ALG12	1.01	6.859289e-19
 
-Keep in mind that these results are meaningless, because the example scripts generate a fake determinstic phenotype for the GWAS regression. For your own analyses, you will need to edit the scripts to include your own phenotype (and likely covariates), or run the analyses using any other software you prefer (e.g. SPSS, MATLAB, etc).
+Keep in mind that these results are meaningless, because the example scripts generate a fake deterministic phenotype for the GWAS regression. For your own analyses, you will need to edit the scripts to include your own phenotype (and likely covariates), or run the analyses using any other software you prefer (e.g. SPSS, MATLAB, etc).
 
 Unless you have a reason not to, we recommend including QGS-based principal components as covariates in your association analyses. For the analyses in the QGS paper, we included 10 to 20 PCs.
 
@@ -248,4 +248,3 @@ This results in
     Run completed
 
 For a full overview of possible arguments, see the section **Command line arguments** above.
-
