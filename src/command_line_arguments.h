@@ -1,7 +1,7 @@
 #ifndef INCL_COMMAND_LINE_ARGUMENTS_H
 #define INCL_COMMAND_LINE_ARGUMENTS_H
 
-#define QGS_VERSION "0.8 release"
+#define QGS_VERSION "1.0 Release (Dec 2020)"
 
 #include <unordered_map>
 #include <vector>
