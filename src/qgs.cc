@@ -8,7 +8,6 @@
 
 int main(int argc, char ** argv) {
   
-
   // GPL COPYRIGHT NOTICE
   
   std::cout << "QGS " << QGS_VERSION << " (C) Gido Schoenmacker.\n"
