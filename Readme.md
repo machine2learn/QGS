@@ -23,7 +23,7 @@ This command will generate an `outputfile.csv` file containing the QGS values.
 To compile the executable, you'll need `make`, libz, and a C++11-compatible compiler. On most Linux systems, these should be available. The Makefile assumes `g++` as the compiler. If you use another compiler, edit Makefile line 4.
 
     git clone https://github.com/machine2learn/QGS.git
-    cd qgs
+    cd QGS
     make
     ./qgs --version
 
@@ -140,7 +140,7 @@ This tutorial assumes that you have a Linux command line (bash) environment.
 First, we will download and compile the QGS program:
 
     git clone https://github.com/machine2learn/QGS.git
-    cd qgs
+    cd QGS
     make
     ./qgs --version
     
