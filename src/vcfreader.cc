@@ -155,7 +155,7 @@ void VCFreader::parse_line(VCFreader::Locus & l) {
 bool VCFreader::read_gt(VCFreader::Locus & l) {
 
   if (!d_buffer) {
-    LOG(QGS::Log::INFO) << "In file `" << d_fname << "` "
+    LOG(QGS::Log::VERBOSE) << "In file `" << d_fname << "` "
       << "locus " << l << " appears to be duplicated. "
       << "Skipping.\n";
     return false;
@@ -265,7 +265,7 @@ bool VCFreader::read_gt(VCFreader::Locus & l) {
 bool VCFreader::read_ds(VCFreader::Locus & l) {
 
   if (!d_buffer) {
-    LOG(QGS::Log::INFO) << "In file `" << d_fname << "` "
+    LOG(QGS::Log::VERBOSE) << "In file `" << d_fname << "` "
       << "locus " << l << " appears to be duplicated. "
       << "Skipping.\n";
     return false;
@@ -330,9 +330,11 @@ bool VCFreader::read_ds(VCFreader::Locus & l) {
 
 bool VCFreader::read_plink(VCFreader::Locus & l) {
 
-  if (!d_buffer && !l.data_ds.empty()) {
-    LOG(QGS::Log::DEBUG) << "Request to read same position twice: duplicate snp position in sample file?\n";
-    return true;
+  if (!d_buffer) {
+    LOG(QGS::Log::VERBOSE) << "In file `" << d_fname << "` "
+      << "locus " << l << " appears to be duplicated. "
+      << "Skipping.\n";
+    return false;
   }
 
   l.data_ds.clear(); // not needed, strictly
