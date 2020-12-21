@@ -33,7 +33,7 @@ std::unordered_map<std::string, std::vector<std::string>>  command_line_argument
   
   // required arguments
   qgs_arguments["sample"] = {"path to input file(s) in VCF or Plink dosage format. may be gz-compressed.", 1, "multi"};
-  qgs_arguments["reference"] = {"path to reference file in VCF format. may be gz-compressed.", 1, "string"};
+  qgs_arguments["reference"] = {"path to reference file in VCF format. may be gz-compressed.", 1, "multi"};
   qgs_arguments["genes"] = {"path to gene database in Gene Transfer Format. my be gz-compressed.", 1, "string"};
   qgs_arguments["out"] = {"filename for writeable output file. any existing file will be overwritten without warning.", 1, "string"};
 
