@@ -4,7 +4,7 @@ QGS is a computer program to create genetic variables from SNP data. For every i
 
 # Quickstart
 
-Executable files for generic Linux and Windows x64 are available. The generic Linux version can be [downloaded here](https://github.com/machine2learn/QGS/raw/master/qgs-x86_64), and the Windows version can be [downloaded here](https://github.com/machine2learn/QGS/raw/master/qgs-win64.exe). **This document assumes that the QGS executable is named "qgs" (or "qgs.exe" for Windows).** If you use the precompiled executables, it is recommended to rename them from "qgs-x86_64" to "qgs" (or "qgs-win64.exe" to "qgs.exe" for Windows).
+Executable files for generic Linux and Windows x64 are available. The v1.0 generic Linux version can be [downloaded here](https://github.com/machine2learn/QGS/releases/download/v1.0/qgs-x86_64), and the Windows version can be [downloaded here](https://github.com/machine2learn/QGS/releases/download/v1.0/qgs-win64.exe). More recent binaries may be available from the repository. **This document assumes that the QGS executable is named "qgs" (or "qgs.exe" for Windows).** If you use the precompiled executables, it is recommended to rename them from "qgs-x86_64" to "qgs" (or "qgs-win64.exe" to "qgs.exe" for Windows).
 
 If you want to compile the program yourself, see **Compiling** below.
 
