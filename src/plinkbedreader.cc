@@ -106,7 +106,7 @@ bool Plinkbedreader::deep_read(SNPreader::Locus & l) {
   l.data_ds.resize(d_num_samples);
   
   if (d_num_pos_read == 0) {
-    LOG(QGS::Log::INFO) << "Duplicate position " << l.chr << ":" <<
+    LOG(QGS::Log::VERBOSE) << "Duplicate position " << l.chr << ":" <<
       l.pos << " in file `" << d_fname << "`: ignoring all but first\n";
     return false;
   }
