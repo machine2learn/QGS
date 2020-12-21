@@ -153,19 +153,14 @@ void VCFreader::parse_line(VCFreader::Locus & l) {
 }
 
 bool VCFreader::read_gt(VCFreader::Locus & l) {
-  
-  //std::cerr << d_buffer.str() << "\n\n\n";
 
-  if (!d_buffer && !l.data_ds.empty()) {
-    LOG(QGS::Log::DEBUG) << "Request to read same position twice: duplicate snp position in sample file?\n";
-    // locus already read, may occor if sample file has multiple snps at one position
-    // TODO currently first snp result is discarded because of storing map<chr, map<pos, Score>>
-    // think about different solution?
-    return true;
+  if (!d_buffer) {
+    LOG(QGS::Log::INFO) << "In file `" << d_fname << "` "
+      << "locus " << l << " appears to be duplicated. "
+      << "Skipping.\n";
+    return false;
   }
-  
-  //std::cerr << "Doing deep read of " << d_fname << " locus " << l.pos << '\n';
-      
+ 
   // find GT in format
   std::size_t const gt_pos = l.format.find("GT");
   if (gt_pos == std::string::npos)
@@ -176,15 +171,11 @@ bool VCFreader::read_gt(VCFreader::Locus & l) {
   l.data_ds.resize(d_num_samples, 0);
   std::size_t idx = -1;
   char c, prev_allele = '!';
-  
-  //std::cerr << "Expecting " << d_num_samples << " samples\n";
 
   std::size_t colon_count = 0, allele_count = 2;
   long double ds_sum = 0;
   std::size_t male_unilog = 0;
   while (d_buffer.get(c)) {
-    
-    //std::cerr << '\n' << ++c_count << ":\t`" << c << "`\t" << idx;
 
     if (c == ':') {
       ++colon_count;
@@ -200,8 +191,7 @@ bool VCFreader::read_gt(VCFreader::Locus & l) {
       else if (allele_count != 2) {
         LOG(QGS::Log::WARNING) << "In file `" << d_fname << "` "
           << "subject " << d_sample.at(idx / 2) << " has incomplete "
-          << "data for locus " << l;
-        LOG(QGS::Log::WARNING) << "Skipping locus.";
+          << "data for locus " << l << '\n';
         break;
       }
       allele_count = 0;
@@ -252,9 +242,7 @@ bool VCFreader::read_gt(VCFreader::Locus & l) {
     ++idx;
   }
   else if (allele_count != 2) {
-    LOG(QGS::Log::WARNING) << "In file `" << d_fname << "` "
-      << "subject " << d_sample.at(idx / 2) << " has incomplete "
-      << "data for locus " << l << ":" << ". Skipping locus.\n";
+    LOG(QGS::Log::WARNING) << "Skipping locus.\n";
     return false;
   }
   
@@ -275,15 +263,12 @@ bool VCFreader::read_gt(VCFreader::Locus & l) {
 }
 
 bool VCFreader::read_ds(VCFreader::Locus & l) {
-  
-  //LOGQGS::Log::WARNING << "reading " << d_fname << " => " << l.chr << ":" << l.pos;
 
-  if (!d_buffer && !l.data_ds.empty()) {
-    LOG(QGS::Log::DEBUG) << "Request to read same position twice: duplicate snp position in sample file?\n";
-    // locus already read, may occor if sample file has multiple snps at one position
-    // TODO currently first snp result is discarded because of storing map<chr, map<pos, Score>>
-    // think about different solution?
-    return true;
+  if (!d_buffer) {
+    LOG(QGS::Log::INFO) << "In file `" << d_fname << "` "
+      << "locus " << l << " appears to be duplicated. "
+      << "Skipping.\n";
+    return false;
   }
 
   // find DS in format
@@ -344,7 +329,6 @@ bool VCFreader::read_ds(VCFreader::Locus & l) {
 }
 
 bool VCFreader::read_plink(VCFreader::Locus & l) {
-  
 
   if (!d_buffer && !l.data_ds.empty()) {
     LOG(QGS::Log::DEBUG) << "Request to read same position twice: duplicate snp position in sample file?\n";

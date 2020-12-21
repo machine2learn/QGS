@@ -253,7 +253,10 @@ int main(int argc, char ** argv) {
         continue;
       }
       
-      if (sample_locus.ref == reference_locus.palt[0] && reference_locus.ref == sample_locus.palt[0]) {
+      if (sample_locus.ref != reference_locus.ref && 
+          sample_locus.ref == reference_locus.palt[0] && 
+          reference_locus.ref == sample_locus.palt[0])
+      {
         LOG(QGS::Log::TRACE) << "Match: locus " 
           << sample_locus.chr << ":" << sample_locus.pos 
           << " has flipped ref/alt data. Correcting.\n";
@@ -268,6 +271,7 @@ int main(int argc, char ** argv) {
           << sample_locus.chr << ":" << sample_locus.pos 
           << " has ref/alt mismatch between sample and reference. skipping locus.\n";
           sample_locus.clear();
+          reference_locus.clear();
           ++sample_counts.skipped;
           ++ref_counts.skipped;
           continue;
