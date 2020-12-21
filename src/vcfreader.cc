@@ -109,8 +109,7 @@ void VCFreader::parse_line(VCFreader::Locus & l) {
 
     if (line.substr(0, 1) == "#")
       continue; // comment line, ignore
-      
-    //d_buffer = std::istringstream(line);
+
     d_buffer.ignore(std::numeric_limits<std::streamsize>::max());
     d_buffer.clear();
     d_buffer.str(line);
@@ -191,11 +190,10 @@ bool VCFreader::read_gt(VCFreader::Locus & l) {
       else if (allele_count != 2) {
         LOG(QGS::Log::WARNING) << "In file `" << d_fname << "` "
           << "subject " << d_sample.at(idx / 2) << " has incomplete "
-          << "data for locus " << l << '\n';
-        break;
+          << "data for locus " << l << ". Skipping.\n";
+        return false;
       }
       allele_count = 0;
-      //std::cerr << " => " << idx;
       continue;
     }
 
