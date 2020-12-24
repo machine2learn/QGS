@@ -16,7 +16,7 @@ library("ggfortify")
 ### SNP PCA
 ### This takes a lot of memory (>20GB)
 ### Better to use alternatives such as Plink, GCTA64, flashpcaR, etc
-### We use pccomp here for 100% compatibility with QGS PCA
+### We use prcomp here for 100% compatibility with QGS PCA
 snps <- read_plink('hm3')
 spca <- prcomp(t(snps$X), scale = TRUE, rank = 2, retx = TRUE)
 
