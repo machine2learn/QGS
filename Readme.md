@@ -223,7 +223,7 @@ Unless you have a reason not to, we recommend including QGS-based principal comp
 
 ### PCA analysis
 
-See here for the PCA analysis as used in the QGS paper: [example_scripts/pca_comparison/Readme.md](example_scripts/pca_comparison/Readme.md).
+See here for the PCA analysis as used in the QGS paper: [example_scripts/pca_comparison/](example_scripts/pca_comparison/).
 
 ### Different command line arguments
 
