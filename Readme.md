@@ -221,6 +221,10 @@ Keep in mind that these results are meaningless, because the example scripts gen
 
 Unless you have a reason not to, we recommend including QGS-based principal components as covariates in your association analyses. For the analyses in the QGS paper, we included 10 to 20 PCs.
 
+### PCA analysis
+
+See here for the PCA analysis as used in the QGS paper: [example_scripts/pca_comparison/Readme.md](example_scripts/pca_comparison/Readme.md).
+
 ### Different command line arguments
 
 By changing some default settings, we can choose to include more variants in the QGS scores.
