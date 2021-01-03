@@ -1,6 +1,6 @@
 # QGS: Quantitative Genetic Scoring
 
-QGS is a computer program to create genetic variables from SNP data. For every individual, it calculates the genetic distance to a reference population. QGS works with both VCF or PLINK format data. The pre-print of the QGS manuscript is available at https://www.biorxiv.org/content/10.1101/2020.12.15.422886v1.
+QGS is a computer program to create genetic variables from SNP data. For every individual, it calculates the genetic distance to a reference population. QGS works with both VCF or PLINK format data. The pre-print of the QGS manuscript is available at https://doi.org/10.1101/2020.12.15.422886.
 
 # Quickstart
 
