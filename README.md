@@ -78,8 +78,8 @@ By default, no flanking regions are included.
 Flag|Description|Example
 ------|-----|------
 --flank [value]|Symmetrical flanking region to be included for every QGS region. Value should be a positive whole number representing the flanking region in kb. Default value: 0.|`--flank 5`
---pre-flank [value]|Asymmetrical flanking region. Specifies the number of kb to be included in front of every QGS region. Regions with reverse strand orientation are handled automatically, provided the information is available in the GTK file. If both `--flank` and `--pre-flank` are provided, `--pre-flank` takes priority.|`--pre-flank 15`
---post-flank [value]|Asymmetrical flanking region. Specifies the number of kb to be included after every QGS region. Regions with reverse strand orientation are handled automatically, provided the information is available in the GTK file. If both `--flank` and `--post-flank` are provided, `--post-flank` takes priority.|`--post-flank 35`
+--pre-flank [value]|Asymmetrical flanking region. Specifies the number of kb to be included in front of every QGS region. Regions with reverse strand orientation are handled automatically, provided the information is available in the genes GTF file. If both `--flank` and `--pre-flank` are provided, `--pre-flank` takes priority.|`--pre-flank 15`
+--post-flank [value]|Asymmetrical flanking region. Specifies the number of kb to be included after every QGS region. Regions with reverse strand orientation are handled automatically, provided the information is available in the genes GTF file. If both `--flank` and `--post-flank` are provided, `--post-flank` takes priority.|`--post-flank 35`
 
 ###### Missing data
 
