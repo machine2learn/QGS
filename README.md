@@ -48,6 +48,7 @@ Flag|Description|Example
 ------|-----|------
 --help|Provides information about command line arguments|`--help`
 --version|Prints QGS version and exits. Other arguments are ignored.|`--version`
+--license|Prints full license information and exits. Other arguments are ignored.|`--license`
 
 
 ###### Filtering
