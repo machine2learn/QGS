@@ -112,7 +112,7 @@ gene_name|gene_id|chr|start|stop|Nsample|Nref|num_loci|total_num_loci|SubjectID1
 BRK1|ENSG00000254999.4_5|3|10157359|10168874|5|2504|55|470|0.178282|0.21087|...
 ...|||||||||||...
 
-The output file has (9 + the number of samples) columns and each row contains one QGS value per genetic location. The columns contain the following information:
+The output file has (9 + the number of samples) columns and each row contains one genetic location with QGS values for every sample individual. The columns contain the following information:
 
 1. **gene_name**: Gene name (string) as given in the GTF file by the "gene_name" attribute. If none is provided, it will be auto-generated as chr:start-stop (e.g. "22:1000-2000").
 2. **gene_id**: Gene ID (string) as given in the GTF file by the "gene_id" attribute. If none is provided, it will be identical to the gene_name.
