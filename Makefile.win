@@ -104,7 +104,7 @@ $(BIN)/boost_iostreams/zlib.o : $(SRC)/boost_iostreams/zlib.cpp
 	$(eval N := 2)
 	$(compile)
 
-$(BIN)/command_line_arguments.o : $(SRC)/command_line_arguments.cc src/cmd_line_options.h src/command_line_arguments.h src/gzfile.h src/log.h
+$(BIN)/command_line_arguments.o : $(SRC)/command_line_arguments.cc src/cmd_line_options.h src/command_line_arguments.h src/gplv3.h src/gzfile.h src/log.h
 	$(eval N := 3)
 	$(compile)
 
