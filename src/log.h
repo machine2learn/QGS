@@ -1,7 +1,18 @@
-/*
-  GNU General Public License v3 (GPLv3)
-  Copyright (c) 2016-2020 Gido Schoenmacker
-  Complete License at https://github.com/machine2learn/QGS/blob/master/LICENSE.md
+/* 
+ * This file is part of the QGS distribution https://github.com/machine2learn/QGS/.
+ * Copyright (c) 2016-2020 Gido Schoenmacker
+ * 
+ * This program is free software: you can redistribute it and/or modify  
+ * it under the terms of the GNU General Public License as published by  
+ * the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful, but 
+ * WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU 
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License 
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef INCL_QGS_LOG_H
