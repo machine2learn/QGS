@@ -76,7 +76,7 @@ LIB := $(patsubst %,-l%,$(LIB))
 ### OBJECT FILE DATA
 
 # Object files
-OBJ   := $(BIN)/command_line_arguments.o $(BIN)/snpreader.o $(BIN)/plinkdosagereader.o $(BIN)/vcfreader.o $(BIN)/boost_iostreams/gzip.o $(BIN)/boost_iostreams/zlib.o $(BIN)/plinkbedreader.o $(BIN)/qgs.o $(BIN)/gene_score.o
+OBJ   := $(BIN)/boost_iostreams/gzip.o $(BIN)/boost_iostreams/zlib.o $(BIN)/command_line_arguments.o $(BIN)/gene_score.o $(BIN)/plinkbedreader.o $(BIN)/plinkdosagereader.o $(BIN)/qgs.o $(BIN)/snpreader.o $(BIN)/vcfreader.o
 
 ### PHONY RULES
 
@@ -96,39 +96,39 @@ createbin :
 
 ### OBJECT FILE RECIPIES FOR COMPILING
 
-$(BIN)/command_line_arguments.o : $(SRC)/command_line_arguments.cc src/cmd_line_options.h src/command_line_arguments.h src/gzfile.h src/log.h
+$(BIN)/boost_iostreams/gzip.o : $(SRC)/boost_iostreams/gzip.cpp 
 	$(eval N := 1)
 	$(compile)
 
-$(BIN)/snpreader.o : $(SRC)/snpreader.cc src/gzfile.h src/log.h src/snpreader.h
+$(BIN)/boost_iostreams/zlib.o : $(SRC)/boost_iostreams/zlib.cpp 
 	$(eval N := 2)
 	$(compile)
 
-$(BIN)/plinkdosagereader.o : $(SRC)/plinkdosagereader.cc src/gzfile.h src/log.h src/naturalsort.h src/plinkdosagereader.h src/snpreader.h
+$(BIN)/command_line_arguments.o : $(SRC)/command_line_arguments.cc src/cmd_line_options.h src/command_line_arguments.h src/gplv3.h src/gzfile.h src/log.h
 	$(eval N := 3)
 	$(compile)
 
-$(BIN)/vcfreader.o : $(SRC)/vcfreader.cc src/gzfile.h src/log.h src/snpreader.h src/vcfreader.h
+$(BIN)/gene_score.o : $(SRC)/gene_score.cc src/gene_score.h src/gzfile.h src/log.h src/snpreader.h
 	$(eval N := 4)
 	$(compile)
 
-$(BIN)/boost_iostreams/gzip.o : $(SRC)/boost_iostreams/gzip.cpp 
+$(BIN)/plinkbedreader.o : $(SRC)/plinkbedreader.cc src/gzfile.h src/log.h src/plinkbedreader.h src/snpreader.h
 	$(eval N := 5)
 	$(compile)
 
-$(BIN)/boost_iostreams/zlib.o : $(SRC)/boost_iostreams/zlib.cpp 
+$(BIN)/plinkdosagereader.o : $(SRC)/plinkdosagereader.cc src/gzfile.h src/log.h src/naturalsort.h src/plinkdosagereader.h src/snpreader.h
 	$(eval N := 6)
 	$(compile)
 
-$(BIN)/plinkbedreader.o : $(SRC)/plinkbedreader.cc src/gzfile.h src/log.h src/plinkbedreader.h src/snpreader.h
+$(BIN)/qgs.o : $(SRC)/qgs.cc src/command_line_arguments.h src/genblock.h src/gene_score.h src/gzfile.h src/log.h src/plinkbedreader.h src/plinkdosagereader.h src/qgs.h src/snpreader.h src/vcfreader.h
 	$(eval N := 7)
 	$(compile)
 
-$(BIN)/qgs.o : $(SRC)/qgs.cc src/command_line_arguments.h src/genblock.h src/gene_score.h src/gzfile.h src/log.h src/plinkdosagereader.h src/qgs.h src/snpreader.h src/vcfreader.h
+$(BIN)/snpreader.o : $(SRC)/snpreader.cc src/gzfile.h src/log.h src/snpreader.h
 	$(eval N := 8)
 	$(compile)
 
-$(BIN)/gene_score.o : $(SRC)/gene_score.cc src/gene_score.h src/gzfile.h src/log.h src/snpreader.h
+$(BIN)/vcfreader.o : $(SRC)/vcfreader.cc src/gzfile.h src/log.h src/snpreader.h src/vcfreader.h
 	$(eval N := 9)
 	$(compile)
 

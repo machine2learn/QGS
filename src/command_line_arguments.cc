@@ -11,6 +11,7 @@
 #include <iomanip>
 #include <string>
 #include "cmd_line_options.h"
+#include "gplv3.h"
 
 namespace QGS {
 
@@ -30,6 +31,7 @@ std::unordered_map<std::string, std::vector<std::string>>  command_line_argument
   // misc arguments
   qgs_arguments["help"] = {"print this message", 0, ""};
   qgs_arguments["version"] = {"print version information", 0, ""};
+  qgs_arguments["license"] = {"print license information", 0, ""};
   
   // required arguments
   qgs_arguments["sample"] = {"path to input file(s) in VCF or Plink dosage format. may be gz-compressed.", 1, "multi"};
@@ -64,6 +66,12 @@ std::unordered_map<std::string, std::vector<std::string>>  command_line_argument
   
   // version information
   if (options.find("version") != options.end()) {
+    std::exit(EXIT_SUCCESS);
+  }
+
+  // license information
+  if (options.find("license") != options.end()) {
+    std::cout << gplv3 << '\n';
     std::exit(EXIT_SUCCESS);
   }
   
