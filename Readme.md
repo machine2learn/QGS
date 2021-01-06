@@ -125,9 +125,15 @@ The output file has (9 + the number of samples) columns and each row contains on
 9. **total_num_loci**: Number (integer) of available variants that were observed to lie inside the current genetic region.
 10. And onwards: QGS value for the current subject (column) for the current genetic region.
 
-
-
 Example scripts to run a GWAS in both Python and R are available in the `example/` directory.
+
+# Gene annotation files
+
+The requires `--genes` command line option needs a gene annotation file in GTF -- Gene Transfer Format. A description of this format can be found here: https://www.ensembl.org/info/website/upload/gff.html
+
+For our paper focussing on human genetics, we have used the annotations provided by [GENCODE](https://www.gencodegenes.org/). These can be downloaded from here: ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/
+
+Make sure to select a gene annotation that matches the [build/reference assembly](https://gatk.broadinstitute.org/hc/en-us/articles/360035890951-Human-genome-reference-builds-GRCh38-or-hg38-b37-hg19) of your genetic data.
 
 # Tutorial
 
