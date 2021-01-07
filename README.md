@@ -1,6 +1,6 @@
 # QGS: Quantitative Genetic Scoring
 
-QGS is a computer program to create genetic variables from SNP data. For every individual, it calculates the genetic distance to a reference population. QGS works with both VCF or PLINK format data. The pre-print of the QGS manuscript is available at https://doi.org/10.1101/2020.12.15.422886.
+QGS is a dimensionality reduction method that can create meaningful genetic variables from sequencing data. For every individual, it calculates the genetic distance to a reference population. QGS works with both VCF or PLINK format data. The pre-print of the QGS manuscript is available at https://doi.org/10.1101/2020.12.15.422886.
 
 # Quickstart
 
@@ -230,7 +230,11 @@ Unless you have a reason not to, we recommend including QGS-based principal comp
 
 ### PCA analysis
 
-See here for the PCA analysis as used in the QGS paper: [example_scripts/pca_comparison/](example_scripts/pca_comparison/).
+Code used for the PCA analysis as used in the QGS paper is available as an example: [example_scripts/pca_comparison/](example_scripts/pca_comparison/).
+
+### Distance from reference
+
+A second example shows how to use QGS to calculate an individual's total genetic distance from a reference population: [example_scripts/distance_from_reference/](example_scripts/distance_from_reference/).
 
 ### Different command line arguments
 
