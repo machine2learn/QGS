@@ -23,7 +23,7 @@ The `plots/` directory contains the six png output plots of the script.
 
 ![Esan in Nigeria scatterplot](plots/hm3_ESN_scatter.png)
 
-For the ESN plots, the Esan in Nigeria population has been used as a reference. As a result, we can see that the YRI (Yoruba in Ibadan, Nigeria) population has the smallest genetic distance from this reference population.
+For the ESN plots, the Esan in Nigeria population has been used as a reference. As a result, we can see that the Yoruba in Ibadan, Nigeria (YRI) population has the smallest genetic distance from this reference population.
 
 Other groups with a relatively small genetic distance from ESN are the African ancestry in Southwest USA (ASW), Luhya in Webuye, Kenya (LWK), and Maasai in Kinyawa, Kenya (MKK) groups.
 
