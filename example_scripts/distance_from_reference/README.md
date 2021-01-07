@@ -15,7 +15,7 @@ The script assumes that `python2`, [`Plink`](http://zzz.bwh.harvard.edu/plink/),
 
 The Linux shell script `qgs_distance.sh` downloads, extracts, lifts and converts the HM3 data, downloads the 1000G chromosome 2 data and extracts three distinct population references, runs QGS, and runs R to create plots.
 
-The R script `rank_qgs.R` calculates QGS sum totals for each HM3 individual and plots these.
+The R script `qgs_distance.R` calculates QGS sum totals for each HM3 individual and plots these.
 
 The `plots/` directory contains the six png output plots of the script.
 
