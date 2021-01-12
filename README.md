@@ -201,7 +201,7 @@ If you are missing Python libraries, make sure to install `pandas`, `numpy`, and
 
 Similarly, the R GWAS script can be started like this:
 
-    Rscript gwas.r ../out.csv
+    Rscript gwas.R ../out.csv
 
 You only need to run one these commands, because both do the same thing but in different programming languages.
 
@@ -214,7 +214,7 @@ The script must be provided with the location of the "out.csv" file as seen abov
 We can check what the top 5 most significantly associated genes are by sorting by the third column (assuming a Linux Bash-like command line):
 
     python3 gwas.py ../out.csv | sort -gk3 | head -5
-    Rscript gwas.r ../out.csv | sort -gk3 | head -5
+    Rscript gwas.R ../out.csv | sort -gk3 | head -5
     
 The output should be something like
 
