@@ -130,7 +130,7 @@ Example scripts to run a GWAS in both Python and R are available in the `example
 
 # Gene annotation files
 
-The requires `--genes` command line option needs a gene annotation file in GTF -- Gene Transfer Format. A description of this format can be found here: https://www.ensembl.org/info/website/upload/gff.html
+The required `--genes` command line option needs a gene annotation file in GTF -- Gene Transfer Format. A description of this format can be found here: https://www.ensembl.org/info/website/upload/gff.html
 
 For our paper focussing on human genetics, we have used the annotations provided by [GENCODE](https://www.gencodegenes.org/). These can be downloaded from here: [ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/](ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/)
 
